@@ -14,16 +14,16 @@ ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet=
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
 #### Evaluations of isolates:
-aproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="A",na = c("", "NA"))
-bproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="B",na = c("", "NA"), range="A1:F385") #trim last col
-cproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="C",na = c("", "NA"))
-dproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="D",na = c("", "NA"))
+aproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="A",na = c("", "NA"))
+bproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="B",na = c("", "NA"), range="A1:F385") #trim last col
+cproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="C",na = c("", "NA"))
+dproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="D",na = c("", "NA"))
 #### Evaluations of cultivars:
-eproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="E",na = c("", "NA"))
-fproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="F",na = c("", "NA"))
-gproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="G",na = c("", "NA"))
-hproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="H",na = c("", "NA"), range="A1:F323") #trim last three cols
-iproj <- read_excel("Brazilian agressiveness_raw_data.xlsx", sheet="I",na = c("", "NA"), range="A1:D286") #trim last 4 cols
+eproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="E",na = c("", "NA"))
+fproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="F",na = c("", "NA"))
+gproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="G",na = c("", "NA"))
+hproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="H",na = c("", "NA"), range="A1:F323") #trim last three cols
+iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na = c("", "NA"), range="A1:D286") #trim last 4 cols
 
 ################# Analysis of aggressiveness ########################################
 
