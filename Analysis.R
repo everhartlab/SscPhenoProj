@@ -7,7 +7,7 @@ library(magrittr)
 library(readr)
 library(ggplot2)
 library(PMCMR)
-
+library(plotrix)
 ################# Reading raw data from Excel file ############################
 ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="Summary", na = c("", "NA"), col_names = FALSE)
 #%>% write_csv("Results-single.csv")
@@ -25,11 +25,9 @@ gproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="G",na
 hproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="H",na = c("", "NA"), range="A1:F323") #trim last three cols
 iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na = c("", "NA"), range="A1:D286") #trim last 4 cols
 
-################# Analysis of aggressiveness ########################################
-
-### 70 isolaves vs. Dassel soybean in detached leaf assay
-asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
-
+################# Analysis of aggressiveness (variation by isolate) ########################################
+### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
+asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
 (a.plot <- asum %>%
     ggplot(mapping = aes(x = Isolate, y = mean)) + 
     geom_point(na.rm = TRUE) +
@@ -38,10 +36,25 @@ asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), mi
     scale_x_discrete(limits= asum$Isolate[sort(asum$mean, index.return=T)$ix]))
 a.plot
 
+(a.plot2 <- asum %>%
+    ggplot(mapping=aes(x=1, y = mean)) +
+    geom_dotplot(binaxis = "y", stackdir = "center", binwidth = .2))
+#+
+    #geom_dotplot(binwidth=.2) +
+ #   geom_dotplot(bins=length(mean)))
+
+ggplot2.dotplot(data=df, xName='dose',yName='len',
+                addBoxplot=TRUE,notch=TRUE)
+
 asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
 
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
+
+################# Analysis of cultivar performance (variation in cultivars) ################################
+
+
+
 
 ################ stopped here ################
 
