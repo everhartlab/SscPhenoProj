@@ -79,11 +79,6 @@ a.plot
 asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
 
 
-
-
-
-
-
   
   res$EC[grep("<=",x = res$EC)] <- NA
 res$EC <- as.numeric(res$EC)
