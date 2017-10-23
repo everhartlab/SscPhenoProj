@@ -28,6 +28,9 @@ iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na
 ################# Analysis of aggressiveness (variation by isolate) ########################################
 ### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
 asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
+### 70 isolaves vs. Dassel soybean in detached leaf assay
+asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
+bsum <- bproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
 (a.plot <- asum %>%
     ggplot(mapping = aes(x = Isolate, y = mean)) + 
     geom_point(na.rm = TRUE) +
@@ -36,6 +39,7 @@ asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), mi
     scale_x_discrete(limits= asum$Isolate[sort(asum$mean, index.return=T)$ix]))
 a.plot
 
+<<<<<<< HEAD
 (a.plot2 <- asum %>%
     ggplot(mapping=aes(x=1, y = mean)) +
     geom_dotplot(binaxis = "y", stackdir = "center", binwidth = .2))
@@ -47,6 +51,15 @@ ggplot2.dotplot(data=df, xName='dose',yName='len',
                 addBoxplot=TRUE,notch=TRUE)
 
 asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
+=======
+asum %>% ggplot(mapping = aes(x = 4, y=mean)) + geom_boxplot()
+
+asum %>% ggplot(mapping = aes(x = 1, y=mean)) +
+    geom_dotplot(stackdir = "center", binaxis = "y", binwidth = .1 , dotsize = 1, position = position_jitter(height=0, width=.02))
+
+
+
+>>>>>>> b6e79fd607a0de566f01c50039803d3c7ab58e1e
 
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
