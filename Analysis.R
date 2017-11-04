@@ -1,6 +1,7 @@
 #################### 
 if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
 devtools::install()
+library(ggpubr)
 library(readxl)
 library(dplyr)
 library(magrittr)
@@ -8,6 +9,7 @@ library(readr)
 library(ggplot2)
 library(PMCMR)
 library(plotrix)
+library(Hmisc)
 ################# Reading raw data from Excel file ############################
 ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="Summary", na = c("", "NA"), col_names = FALSE)
 #%>% write_csv("Results-single.csv")
@@ -31,17 +33,26 @@ asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), mi
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
 asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 bsum <- bproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
-(a.plot <- asum %>%
-    ggplot(mapping = aes(x = Isolate, y = mean)) + 
-    geom_point(na.rm = TRUE) +
-    geom_jitter(width = 0.1) +
-    theme_bw(base_size = 14) +
-    scale_x_discrete(limits= asum$Isolate[sort(asum$mean, index.return=T)$ix]))
-a.plot
 
-(a.plot2 <- asum %>%
+agg <- cbind(asum, rep("a", length(asum$sd)))
+bgg <- cbind(bsum, rep("b", length(bsum$sd)))
+colnames(agg)[7] <- "proj"
+colnames(bgg)[7] <- "proj"
+tot <- rbind(agg,bgg)
+
+p2 <- asum %>%
     ggplot(mapping=aes(x=1, y = mean)) +
-    geom_dotplot(binaxis = "y", stackdir = "center", binwidth = .2))
+    geom_dotplot(binaxis = "y", stackdir = "center", fill=NA, binwidth = .4)
+p2
+## dotplot with mean point in red
+p2 + stat_summary(fun.y=mean, geom="point", shape=18,
+                 size=3, color="red")
+ggplot(asum, aes(x=1, y=mean)) + 
+  geom_violin(trim = FALSE)+
+  geom_dotplot(binaxis='y', stackdir='center')
+p2 + stat_summary(fun.data="mean_sdl", fun.args = list(mult=1), 
+                 geom="pointrange", color="red")
+
 #+
     #geom_dotplot(binwidth=.2) +
  #   geom_dotplot(bins=length(mean)))
