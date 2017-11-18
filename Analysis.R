@@ -33,6 +33,7 @@ asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), mi
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
 asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 bsum <- bproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
+csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
 
 agg <- cbind(asum, rep("a", length(asum$sd)))
 bgg <- cbind(bsum, rep("b", length(bsum$sd)))
@@ -52,6 +53,10 @@ ggplot(asum, aes(x=1, y=mean)) +
   geom_dotplot(binaxis='y', stackdir='center')
 p2 + stat_summary(fun.data="mean_sdl", fun.args = list(mult=1), 
                  geom="pointrange", color="red")
+
+######## need to decide what kind of plot to use and obtain same data for the other isolates
+
+
 
 #+
     #geom_dotplot(binwidth=.2) +
