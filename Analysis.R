@@ -1,7 +1,6 @@
 #################### 
 if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
 devtools::install()
-install.github("devtools")
 library(devtools)
 library(ggpubr)
 library(readxl)
