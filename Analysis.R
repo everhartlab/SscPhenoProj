@@ -9,8 +9,12 @@ library(readr)
 library(ggplot2)
 library(PMCMR)
 library(plotrix)
-library(Hmisc)
+library(Hmisc)    
 library(grid)
+###################### Special note ###########################################
+# From net: "So with hmisc installed I have to do use dplyr::summarise. Unloading hmisc allowed dplyr:summarize to work."
+# Loading Hmisc after dplyr requires spelling summarize as summarise in script below
+# The error that this produces is "Error in summarize( ...) argument "by" is missing..."
 ################# Reading raw data from Excel file ############################
 ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="Summary", na = c("", "NA"), col_names = FALSE)
 #%>% write_csv("Results-single.csv")
