@@ -1,6 +1,5 @@
 #################### 
 if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
-devtools::install()
 library(devtools)
 library(ggpubr)
 library(readxl)
@@ -32,12 +31,12 @@ iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na
 
 ################# Analysis of aggressiveness (variation by isolate) ########################################
 ### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
-asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
+asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(),  mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
-asum <- aproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
-bsum <- bproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
-csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
-dsum <- dproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Score), min = min(Score), max = max(Score), sd = sd(Score))
+asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
+bsum <- bproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
+csum <- cproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
+dsum <- dproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Score), min = min(Score), max = max(Score), sd = sd(Score))
 
 agg <- cbind(asum, rep("a", length(asum$sd)))
 bgg <- cbind(bsum, rep("b", length(bsum$sd)))
@@ -53,23 +52,23 @@ st <- rbind(bgg,dgg)
 
 p2 <- dlb %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=1/2) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=2/3) +
   ###  change fill to be equal to the origin of the isolate ==== Brazil or USA
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   ## there are several labeling features within labs() -- check help for more options
   theme_minimal() +
   labs(y = "Detached leaf assay") +
-  scale_x_discrete(labels=c("a" = "SB:Dassel", "c" = "DB:Alvorada")) +
+  scale_x_discrete(labels=c("a" = "ST:Dassel", "c" = "DLB:Alvorada")) +
   theme(axis.title.x = element_blank())
 
 p3 <- st %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=1/2) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=2/3) +
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   theme_minimal() +
   scale_y_continuous(position = "right") +
   labs(y = "Straw test rating") +
-  scale_x_discrete(labels=c("b" = "DB:G122", "d" = "DB:Alvorada")) +
+  scale_x_discrete(labels=c("b" = "DLB:G122", "d" = "DLB:Alvorada")) +
   theme(axis.title.x = element_blank())
 grid.newpage()
 grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
