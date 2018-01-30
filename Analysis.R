@@ -21,6 +21,11 @@ ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet=
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
 #### Evaluations of isolates:
+# A	70 isolates vs Dassel - soybean
+# B	Straw test_32 isolates_dry bean_G122
+# C	29 isolates vs IAC_DLB
+# D	Straw test_28_isolates_IAC_Alv_Brazil
+
 aproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="A",na = c("", "NA"))
 bproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="B",na = c("", "NA"), range="A1:F385") #trim last col
 bproj$`8 dai (cm)` <- as.numeric(bproj$`8 dai (cm)`)
@@ -62,7 +67,7 @@ p2 <- dlb %>%
   ## there are several labeling features within labs() -- check help for more options
   theme_minimal() +
   labs(y = "Detached leaf assay") +
-  scale_x_discrete(labels=c("a" = "ST:Dassel", "c" = "DLB:Alvorada")) +
+  scale_x_discrete(labels=c("a" = "Dassel", "c" = "Alvorada")) +
   theme(axis.title.x = element_blank())
 
 p3 <- st %>%
@@ -72,7 +77,7 @@ p3 <- st %>%
   theme_minimal() +
   scale_y_continuous(position = "right") +
   labs(y = "Straw test rating") +
-  scale_x_discrete(labels=c("b" = "DLB:G122", "d" = "DLB:Alvorada")) +
+  scale_x_discrete(labels=c("b" = "G122", "d" = "Alvorada")) +
   theme(axis.title.x = element_blank())
 grid.newpage()
 grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
