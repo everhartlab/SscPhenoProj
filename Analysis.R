@@ -97,7 +97,6 @@ model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
 out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
 plot(out3)
 
-library(ggplot2)
 
 #+
     #geom_dotplot(binwidth=.2) +
