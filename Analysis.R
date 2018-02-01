@@ -84,10 +84,8 @@ grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
 
 
 
-
-
 ######## need to decide what kind of plot to use and obtain same data for the other isolates
-
+library(agricolae)
 
 ### LSD Test --
 
@@ -99,6 +97,7 @@ model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
 out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
 plot(out3)
 
+library(ggplot2)
 
 #+
     #geom_dotplot(binwidth=.2) +
@@ -119,10 +118,7 @@ asum %>% ggplot(mapping = aes(x = 1, y=mean)) +
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 
 ################# Analysis of cultivar performance (variation in cultivars) ################################
-
-
-
-
+##### STOP HERE #########################################
 ################ stopped here ################
 
 
