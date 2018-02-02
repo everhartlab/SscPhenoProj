@@ -11,6 +11,7 @@ library(PMCMR)
 library(plotrix)
 library(Hmisc)    
 library(grid)
+library(gridExtra)
 ###################### Special note ###########################################
 # From net: "So with hmisc installed I have to do use dplyr::summarise. Unloading hmisc allowed dplyr:summarize to work."
 # Loading Hmisc after dplyr requires spelling summarize as summarise in script below
@@ -21,10 +22,10 @@ ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet=
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
 #### Evaluations of isolates:
-# A	70 isolates vs Dassel - soybean
-# B	Straw test_32 isolates_dry bean_G122
-# C	29 isolates vs IAC_DLB
-# D	Straw test_28_isolates_IAC_Alv_Brazil
+# A	70 isolates vs Dassel - soybean       ## partially resistant
+# B	Straw test_32 isolates_dry bean_G122  ## partially resistant
+# C	29 isolates vs IAC_Alvorada_DLB
+# D	Straw test_28_isolates_IAC_Alvorada_Brazil
 
 aproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="A",na = c("", "NA"))
 bproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="B",na = c("", "NA"), range="A1:F385") #trim last col
@@ -42,60 +43,102 @@ iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na
 ### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
 asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(),  mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
-asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
+asum <- aproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 bsum <- bproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
 csum <- cproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
 dsum <- dproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Score), min = min(Score), max = max(Score), sd = sd(Score))
 
-agg <- cbind(asum, rep("a", length(asum$sd)))
-bgg <- cbind(bsum, rep("b", length(bsum$sd)))
-cgg <- cbind(csum, rep("c", length(csum$mean)))
-dgg <- cbind(dsum, rep("d", length(dsum$mean)))
+agg <- tibble::add_column(asum, proj = rep(c("a1","a2","a3"), (length(asum$mean)/3))) %>% select(-Collection) %>% as.data.frame() ## added to distinguish each rep bc they're sig dif
+bgg <- cbind(bsum, proj = rep("b", length(bsum$sd)))
+cgg <- cbind(csum, proj = rep("c", length(csum$mean)))
+dgg <- cbind(dsum, proj = rep("d", length(dsum$mean)))
 
-colnames(agg)[7] <- "proj"
-colnames(bgg)[7] <- "proj"
-colnames(cgg)[7] <- "proj"
-colnames(dgg)[7] <- "proj"
 dlb <- rbind(agg,cgg)
 st <- rbind(bgg,dgg)
 
 p2 <- dlb %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=2/3) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="gray", size=3.5, alpha=3/4) +
   ###  change fill to be equal to the origin of the isolate ==== Brazil or USA
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   ## there are several labeling features within labs() -- check help for more options
   theme_minimal() +
+#  coord_fixed(ratio = 0.2) +
   labs(y = "Detached leaf assay") +
-  scale_x_discrete(labels=c("a" = "Dassel", "c" = "Alvorada")) +
+  scale_x_discrete(labels=c("a1" = "Dassel.1","a2" = "Dassel.2","a3" = "Dassel.3", "c" = "IAC.Alvorada")) +
   theme(axis.title.x = element_blank())
 
 p3 <- st %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=2/3) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="gray", size=3.5, alpha=3/4) +
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   theme_minimal() +
   scale_y_continuous(position = "right") +
   labs(y = "Straw test rating") +
-  scale_x_discrete(labels=c("b" = "G122", "d" = "Alvorada")) +
+  scale_x_discrete(labels=c("b" = "G122", "d" = "IAC.Alvorada")) +
   theme(axis.title.x = element_blank())
 grid.newpage()
-grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
+#grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
+#(arrangeGrob(p2,p3,ncol=2,widths=c(.8,.3)))
 
+grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
 
 
 ######## need to decide what kind of plot to use and obtain same data for the other isolates
 library(agricolae)
 
-### LSD Test --
+#### Evaluations of isolates:
+# A	70 isolates vs Dassel - soybean
+# B	Straw test_32 isolates_dry bean_G122
+# C	29 isolates vs IAC_DLB
+# D	Straw test_28_isolates_IAC_Alv_Brazil
+
+### LSD Test and ANOVA ######################################################
+
+### Performed here using 10 observations per isolate and compared:
+# moda <- aov(Area~Collection, data=aproj)
+# outa <- LSD.test(moda, "Collection", p.adj="bonferroni")
+# plot(outa)
+# anova(moda)
+
+### Performed here using 1 mean observation per isolate and compared:
+modaa <- aov(mean~Collection, data=asum)
+outaa <- LSD.test(modaa, "Collection", p.adj="bonferroni")
+plot(outaa)
+anova(modaa)
+
+# ### Performed here using 10 observations per isolate and compared:
+# modc <- aov(`48 horas`~Collection, data=cproj)
+# outc <- LSD.test(modc, "Collection", p.adj="bonferroni")
+# plot(outc)
+# anova(modc)            ### No significant difference
+
+### Performed here using 1 mean observation per isolate and compared:
+modcc <- aov(mean~Collection, data=csum)
+outcc <- LSD.test(modcc, "Collection", p.adj="bonferroni")
+plot(outcc)
+anova(modcc)
+
+
+
 
 model2<-aov(Area~Name, data=eproj)
 out2 <- LSD.test(model2,"Name", p.adj="bonferroni")
 plot(out2)
 
+
+
 model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
 out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
 plot(out3)
+
+### ANOVA to compare groups:# 
+# model<-aov(yield~virus, data=sweetpotato)
+# cv.model(model)
+# anova(model)
+
+
+
 
 
 #+
