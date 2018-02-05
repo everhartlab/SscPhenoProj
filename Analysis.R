@@ -58,24 +58,24 @@ st <- rbind(bgg,dgg)
 
 p2 <- dlb %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="gray", size=3.5, alpha=3/4) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
   ###  change fill to be equal to the origin of the isolate ==== Brazil or USA
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   ## there are several labeling features within labs() -- check help for more options
   theme_minimal() +
 #  coord_fixed(ratio = 0.2) +
-  labs(y = "Detached leaf assay") +
-  scale_x_discrete(labels=c("a1" = "Dassel.1","a2" = "Dassel.2","a3" = "Dassel.3", "c" = "IAC.Alvorada")) +
+  labs(y = "Detached leaf bioassay") +
+  scale_x_discrete(labels=c("a1" = "Dassel.1","a2" = "Dassel.2","a3" = "Dassel.3", "c" = "IAC-Alvorada")) +
   theme(axis.title.x = element_blank())
 
 p3 <- st %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="gray", size=3.5, alpha=3/4) +
+  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
   theme_minimal() +
   scale_y_continuous(position = "right") +
   labs(y = "Straw test rating") +
-  scale_x_discrete(labels=c("b" = "G122", "d" = "IAC.Alvorada")) +
+  scale_x_discrete(labels=c("b" = "G122", "d" = "IAC-Alvorada")) +
   theme(axis.title.x = element_blank())
 grid.newpage()
 #grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
