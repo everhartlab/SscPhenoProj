@@ -45,7 +45,7 @@ asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(),  mean = mean(Area), m
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
 asum <- aproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 bsum <- bproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
-csum <- cproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
+csum <- cproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
 dsum <- dproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Score), min = min(Score), max = max(Score), sd = sd(Score))
 
 agg <- tibble::add_column(asum, proj = rep(c("a1","a2","a3"), (length(asum$mean)/3))) %>% select(-Collection) %>% as.data.frame() ## added to distinguish each rep bc they're sig dif
@@ -85,7 +85,7 @@ grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
 
 
 ######## need to decide what kind of plot to use and obtain same data for the other isolates
-library(agricolae)
+
 
 #### Evaluations of isolates:
 # A	70 isolates vs Dassel - soybean
@@ -102,10 +102,32 @@ library(agricolae)
 # anova(moda)
 
 ### Performed here using 1 mean observation per isolate and compared:
-modaa <- aov(mean~Collection, data=asum)
-outaa <- LSD.test(modaa, "Collection", p.adj="bonferroni")
-plot(outaa)
-anova(modaa)
+
+modaa <- aov(mean~Isolate, data=asum)
+  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
+  plot(outaa)
+  anova(modaa)
+
+aproj1 <- filter(aproj, Collection == "first")
+  modaa <- aov(Area~Isolate, data=aproj1)
+  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
+  plot(outaa)
+  anova(modaa)
+
+aproj2 <- filter(aproj, Collection == "second")
+  modaa <- aov(Area~Isolate, data=aproj2)
+  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
+  plot(outaa)
+  anova(modaa)
+
+aproj3 <- filter(aproj, Collection == "third")
+  modaa <- aov(Area~Isolate, data=aproj3)
+  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
+  plot(outaa)
+  anova(modaa)
+
+
+
 
 # ### Performed here using 10 observations per isolate and compared:
 # modc <- aov(`48 horas`~Collection, data=cproj)
@@ -113,33 +135,24 @@ anova(modaa)
 # plot(outc)
 # anova(modc)            ### No significant difference
 
-### Performed here using 1 mean observation per isolate and compared:
-modcc <- aov(mean~Collection, data=csum)
-outcc <- LSD.test(modcc, "Collection", p.adj="bonferroni")
-plot(outcc)
-anova(modcc)
-
-
-
-
-model2<-aov(Area~Name, data=eproj)
-out2 <- LSD.test(model2,"Name", p.adj="bonferroni")
-plot(out2)
-
-
-
-model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
-out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
-plot(out3)
+# ### Performed here using 1 mean observation per isolate and compared:
+# modcc <- aov(mean~Collection, data=csum)
+# outcc <- LSD.test(modcc, "Collection", p.adj="bonferroni")
+# plot(outcc)
+# anova(modcc)
+# 
+# model2<-aov(Area~Name, data=eproj)
+# out2 <- LSD.test(model2,"Name", p.adj="bonferroni")
+# plot(out2)
+# 
+# model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
+# out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
+# plot(out3)
 
 ### ANOVA to compare groups:# 
 # model<-aov(yield~virus, data=sweetpotato)
 # cv.model(model)
 # anova(model)
-
-
-
-
 
 #+
     #geom_dotplot(binwidth=.2) +
