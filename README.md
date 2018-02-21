@@ -19,15 +19,9 @@ eliminating the prefix "97". For example, isolates named 2A, 5B, 4D are actually
  - Missing data are formatted as `.`, `#VALUE!`, or a blank cell.
 
 
-70 isolates vs Dassel - soybean
-Straw test_32 isolates_dry bean_G122
-29 isolates vs IAC_DLB
-Straw test_28_isolates_IAC_Alv_Brazil
-Soybean cultivars
-First exp_rep_ DLB_dry bean cultivars_2B and 2D
-Second exp_re_DLB_dry bean cultivars_2B
-First exp_rep_strawtest_dry bean cultivars_2B and 2D
-Second exp_rep_ strawtest_dry bean cultivars_2D
+
+
+
 
 ### Sheet A
 
@@ -47,7 +41,7 @@ Detached Leaf Bioassay: 70 isolates vs Dassel on soybean.
 | Isolate number | Numeric isolate number relative to this analysis                    |
 | Isolate        | TJM isolate number                                                  |
 | Collection     | Collection time: first=21, second=28, third=35 days after emergence |
-| Area           | Lesion Area (cm^2^?)                                                |
+| Area           | Lesion Area (cm^2^)                                                 |
 
 Isolate 1\* = from isolate 1 (P). This isolate has \* because TJM took sclerotia
 after he exposed this isolate in dicarboximide fungicide. It grew well in the
@@ -83,37 +77,98 @@ Detached Leaf Bioassay: 29 isolates vs IAC
  - 29 isolates
  - 25 blocks
 
-| Column Name    | Description                                                                                 |
-|:---------------|:--------------------------------------------------------------------------------------------|
-| Section        | An experimental section denoting simultaneous evaluations                                   |
-| Block          | Experimental block                                                                          |
-| Isolate_number | Experiment-specific number                                                                  |
-| Isolate        | TJM isolate number                                                                          |
-| Collection     | Collection time: first=21, second=28, third=35 days after emergence                         |
-| 24 horas       | Lesion length in centimeters 8 days after inoculuation                                      |
-| 30 horas       | Area under the disease progress curve from evaluations at 3, 6 and 8 days after inoculation |
-| 36 horas       | lesion length in centimeters after first node                                               |
-| 48 horas       | Petzoldt & Dickson Straw Test Score (range: 1--9)                                           |
-| AUMPD          | Area Under the Mycelial Progress Curve                                                      |
+| Column Name    | Description                                                         |
+|:---------------|:--------------------------------------------------------------------|
+| Section        | An experimental section denoting simultaneous evaluations           |
+| Block          | Experimental block                                                  |
+| Isolate_number | Experiment-specific number                                          |
+| Isolate        | TJM isolate number                                                  |
+| Collection     | Collection time: first=21, second=28, third=35 days after emergence |
+| 24 horas       | Lesion area in centimeters after 24 hours                           |
+| 30 horas       | Lesion area in centimeters after 30 hours                           |
+| 36 horas       | Lesion area in centimeters after 36 hours                           |
+| 48 horas       | Lesion area in centimeters after 48 hours                           |
+| AUMPD          | Area Under the Mycelial Progress Curve                              |
 
 ### Sheet D
 
+Straw test_28_isolates_IAC_Alv_Brazil
 
+| Column Name    | Description                                       |
+|:---------------|:--------------------------------------------------|
+| Isolate_number | Experiment-specific number                        |
+| Isolate        | TJM isolate number                                |
+| Rep            | Experimental replicate                            |
+| Score          | Petzoldt & Dickson Straw Test Score (range: 1--9) |
 
 ### Sheet E
 
+Detached Leaf Bioassay: Soybean cultivars
 
+| Column Name | Description                                       |
+|:------------|:--------------------------------------------------|
+| Exp_rep     | Experimental replicate                            |
+| Variety     | Numerical designator for soybean variety          |
+| Rep         | Biological replicate                              |
+| Score       | Petzoldt & Dickson Straw Test Score (range: 1--9) |
+| Area        | Lesion Area (cm^2^)                               |
 
 ### Sheet F
 
+First exp_rep_ DLB_dry bean cultivars_2B and 2D
 
+| Column Name     | Description                                                             |
+|:----------------|:------------------------------------------------------------------------|
+| Block           | Experimental block                                                      |
+| Isolate         | TJM Isolate identifier                                                  |
+| Cultivar_number | Numerical desginator for dry bean variety                               |
+| Cultivar_name   | Dry bean cultivar name                                                  |
+| 24              | lesion area in centimeters 24 hours post inoculation                    |
+| 30              | lesion area in centimeters 30 hours post inoculation                    |
+| 36              | lesion area in centimeters 36 hours post inoculation                    |
+| 42              | lesion area in centimeters 42 hours post inoculation                    |
+| 48              | lesion area in centimeters 48 hours post inoculation                    |
+| 54              | lesion area in centimeters 54 hours post inoculation                    |
+| 60              | lesion area in centimeters 60 hours post inoculation                    |
+| 66              | lesion area in centimeters 66 hours post inoculation                    |
+| AUMPC (48)      | Area under the mycelial progress curve up to 48 hours post inoculation. |
+| AUMPC (66h)     | Area under the mycelial progress curve up to 66 hours post inoculation. |
 
 ### Sheet G
 
+Second exp_re_DLB_dry bean cultivars_2B
 
+| Column Name     | Description                                          |
+|:----------------|:-----------------------------------------------------|
+| Block           | Experimental block                                   |
+| Cultivar_number | Numerical desginator for dry bean variety            |
+| Cultivar_name   | Dry bean cultivar name                               |
+| 24              | lesion area in centimeters 24 hours post inoculation |
+| 30              | lesion area in centimeters 30 hours post inoculation |
+| 36              | lesion area in centimeters 36 hours post inoculation |
+| 42              | lesion area in centimeters 42 hours post inoculation |
+| 48              | lesion area in centimeters 48 hours post inoculation |
+| AUMPC           | Area under the mycelial progress curve               |
 
 ### Sheet H
 
+First exp_rep_strawtest_dry bean cultivars_2B and 2D
 
+| Column Name | Description                                       |
+|:------------|:--------------------------------------------------|
+| Number      | Numerical designator for dry bean cultivar        |
+| Cultivar    | Dry bean cultivar name                            |
+| Rep         | Experimental replicate                            |
+| Isolate     | TJM Isolate identifier                            |
+| Score       | Petzoldt & Dickson Straw Test Score (range: 1--9) |
 
 ### Sheet I
+
+Second exp_rep_ strawtest_dry bean cultivars_2D
+
+| Column Name | Description                                       |
+|:------------|:--------------------------------------------------|
+| Number      | Numerical designator for dry bean cultivar        |
+| Cultivar    | Dry bean cultivar name                            |
+| Rep         | Experimental replicate                            |
+| Score       | Petzoldt & Dickson Straw Test Score (range: 1--9) |
