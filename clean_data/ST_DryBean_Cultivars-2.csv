@@ -1,0 +1,286 @@
+Number,Cultivar,Rep,Score
+1,Pérola,1,6
+1,Pérola,2,5
+1,Pérola,3,6
+1,Pérola,4,6
+1,Pérola,5,6
+1,Pérola,6,4
+1,Pérola,7,4
+1,Pérola,8,6
+1,Pérola,9,4
+1,Pérola,10,5
+1,Pérola,11,4
+1,Pérola,12,4
+1,Pérola,13,2
+1,Pérola,14,4
+1,Pérola,15,NA
+2,BRS Pontal,1,4
+2,BRS Pontal,2,4
+2,BRS Pontal,3,6
+2,BRS Pontal,4,4
+2,BRS Pontal,5,7
+2,BRS Pontal,6,4
+2,BRS Pontal,7,4
+2,BRS Pontal,8,4
+2,BRS Pontal,9,6
+2,BRS Pontal,10,7
+2,BRS Pontal,11,5
+2,BRS Pontal,12,7
+2,BRS Pontal,13,5
+2,BRS Pontal,14,4
+2,BRS Pontal,15,5
+4,BRS Requinte,1,4
+4,BRS Requinte,2,4
+4,BRS Requinte,3,6
+4,BRS Requinte,4,7
+4,BRS Requinte,5,7
+4,BRS Requinte,6,4
+4,BRS Requinte,7,7
+4,BRS Requinte,8,7
+4,BRS Requinte,9,7
+4,BRS Requinte,10,7
+4,BRS Requinte,11,7
+4,BRS Requinte,12,5
+4,BRS Requinte,13,6
+4,BRS Requinte,14,8
+4,BRS Requinte,15,5
+5,IPR Gralha,1,9
+5,IPR Gralha,2,4
+5,IPR Gralha,3,6
+5,IPR Gralha,4,4
+5,IPR Gralha,5,6
+5,IPR Gralha,6,6
+5,IPR Gralha,7,8
+5,IPR Gralha,8,8
+5,IPR Gralha,9,5
+5,IPR Gralha,10,7
+5,IPR Gralha,11,8
+5,IPR Gralha,12,NA
+5,IPR Gralha,13,NA
+5,IPR Gralha,14,NA
+5,IPR Gralha,15,NA
+6,IPR Curió,1,6
+6,IPR Curió,2,6
+6,IPR Curió,3,6
+6,IPR Curió,4,7
+6,IPR Curió,5,7
+6,IPR Curió,6,4
+6,IPR Curió,7,5
+6,IPR Curió,8,8
+6,IPR Curió,9,6
+6,IPR Curió,10,7
+6,IPR Curió,11,7
+6,IPR Curió,12,7
+6,IPR Curió,13,6
+6,IPR Curió,14,7
+6,IPR Curió,15,7
+7,IPR Uirapuru,1,4
+7,IPR Uirapuru,2,4
+7,IPR Uirapuru,3,3
+7,IPR Uirapuru,4,7
+7,IPR Uirapuru,5,7
+7,IPR Uirapuru,6,4
+7,IPR Uirapuru,7,4
+7,IPR Uirapuru,8,2
+7,IPR Uirapuru,9,7
+7,IPR Uirapuru,10,4
+7,IPR Uirapuru,11,4
+7,IPR Uirapuru,12,5
+7,IPR Uirapuru,13,7
+7,IPR Uirapuru,14,7
+7,IPR Uirapuru,15,3
+8,IPR Tuiuiu,1,3
+8,IPR Tuiuiu,2,3
+8,IPR Tuiuiu,3,7
+8,IPR Tuiuiu,4,6
+8,IPR Tuiuiu,5,7
+8,IPR Tuiuiu,6,6
+8,IPR Tuiuiu,7,7
+8,IPR Tuiuiu,8,5
+8,IPR Tuiuiu,9,4
+8,IPR Tuiuiu,10,4
+8,IPR Tuiuiu,11,5
+8,IPR Tuiuiu,12,5
+8,IPR Tuiuiu,13,4
+8,IPR Tuiuiu,14,7
+8,IPR Tuiuiu,15,7
+9,IPR Andorinha,1,4
+9,IPR Andorinha,2,6
+9,IPR Andorinha,3,6
+9,IPR Andorinha,4,6
+9,IPR Andorinha,5,6
+9,IPR Andorinha,6,4
+9,IPR Andorinha,7,5
+9,IPR Andorinha,8,7
+9,IPR Andorinha,9,6
+9,IPR Andorinha,10,4
+9,IPR Andorinha,11,4
+9,IPR Andorinha,12,4
+9,IPR Andorinha,13,4
+9,IPR Andorinha,14,7
+9,IPR Andorinha,15,5
+10,IPR Bem-te-vi,1,6
+10,IPR Bem-te-vi,2,4
+10,IPR Bem-te-vi,3,9
+10,IPR Bem-te-vi,4,7
+10,IPR Bem-te-vi,5,8
+10,IPR Bem-te-vi,6,8
+10,IPR Bem-te-vi,7,5
+10,IPR Bem-te-vi,8,4
+10,IPR Bem-te-vi,9,7
+10,IPR Bem-te-vi,10,7
+10,IPR Bem-te-vi,11,4
+10,IPR Bem-te-vi,12,7
+10,IPR Bem-te-vi,13,7
+10,IPR Bem-te-vi,14,NA
+10,IPR Bem-te-vi,15,NA
+11,IPR Tangará,1,5
+11,IPR Tangará,2,4
+11,IPR Tangará,3,4
+11,IPR Tangará,4,6
+11,IPR Tangará,5,4
+11,IPR Tangará,6,4
+11,IPR Tangará,7,3
+11,IPR Tangará,8,5
+11,IPR Tangará,9,4
+11,IPR Tangará,10,5
+11,IPR Tangará,11,4
+11,IPR Tangará,12,4
+11,IPR Tangará,13,4
+11,IPR Tangará,14,2
+11,IPR Tangará,15,4
+12,IPR 139,1,7
+12,IPR139,2,6
+12,IPR 139,3,4
+12,IPR 139,4,3
+12,IPR 139,5,3
+12,IPR 139,6,5
+12,IPR 139,7,4
+12,IPR 139,8,6
+12,IPR 139,9,7
+12,IPR 139,10,7
+12,IPR 139,11,8
+12,IPR 139,12,4
+12,IPR 139,13,6
+12,IPR 139,14,6
+12,IPR 139,15,5
+13,IPR Campos Gerais,1,4
+13,IPR Campos Gerais,2,7
+13,IPR Campos Gerais,3,6
+13,IPR Campos Gerais,4,4
+13,IPR Campos Gerais,5,3
+13,IPR Campos Gerais,6,7
+13,IPR Campos Gerais,7,3
+13,IPR Campos Gerais,8,7
+13,IPR Campos Gerais,9,4
+13,IPR Campos Gerais,10,3
+13,IPR Campos Gerais,11,9
+13,IPR Campos Gerais,12,7
+13,IPR Campos Gerais,13,4
+13,IPR Campos Gerais,14,4
+13,IPR Campos Gerais,15,5
+15,IAPAR 81,1,5
+15,IAPAR 81,2,7
+15,IAPAR 81,3,5
+15,IAPAR 81,4,6
+15,IAPAR 81,5,5
+15,IAPAR 81,6,4
+15,IAPAR 81,7,3
+15,IAPAR 81,8,7
+15,IAPAR 81,9,4
+15,IAPAR 81,10,5
+15,IAPAR 81,11,4
+15,IAPAR 81,12,5
+15,IAPAR 81,13,5
+15,IAPAR 81,14,4
+15,IAPAR 81,15,4
+16,IPR Juriti,1,5
+16,IPR Juriti,2,6
+16,IPR Juriti,3,6
+16,IPR Juriti,4,4
+16,IPR Juriti,5,7
+16,IPR Juriti,6,4
+16,IPR Juriti,7,4
+16,IPR Juriti,8,5
+16,IPR Juriti,9,4
+16,IPR Juriti,10,5
+16,IPR Juriti,11,6
+16,IPR Juriti,12,5
+16,IPR Juriti,13,NA
+16,IPR Juriti,14,NA
+16,IPR Juriti,15,NA
+18,IAC Imperador,1,4
+18,IAC Imperador,2,4
+18,IAC Imperador,3,4
+18,IAC Imperador,4,4
+18,IAC Imperador,5,4
+18,IAC Imperador,6,4
+18,IAC Imperador,7,3
+18,IAC Imperador,8,5
+18,IAC Imperador,9,6
+18,IAC Imperador,10,7
+18,IAC Imperador,11,5
+18,IAC Imperador,12,4
+18,IAC Imperador,13,2
+18,IAC Imperador,14,4
+18,IAC Imperador,15,4
+20,IAC Una,1,4
+20,IAC Una,2,6
+20,IAC Una,3,7
+20,IAC Una,4,7
+20,IAC Una,5,4
+20,IAC Una,6,8
+20,IAC Una,7,4
+20,IAC Una,8,7
+20,IAC Una,9,7
+20,IAC Una,10,4
+20,IAC Una,11,7
+20,IAC Una,12,4
+20,IAC Una,13,5
+20,IAC Una,14,4
+20,IAC Una,15,7
+21,IAC Alvorada,1,4
+21,IAC Alvorada,2,4
+21,IAC Alvorada,3,4
+21,IAC Alvorada,4,6
+21,IAC Alvorada,5,4
+21,IAC Alvorada,6,4
+21,IAC Alvorada,7,5
+21,IAC Alvorada,8,4
+21,IAC Alvorada,9,6
+21,IAC Alvorada,10,3
+21,IAC Alvorada,11,4
+21,IAC Alvorada,12,4
+21,IAC Alvorada,13,4
+21,IAC Alvorada,14,4
+21,IAC Alvorada,15,4
+22,IAC Diplomata,1,4
+22,IAC Diplomata,2,4
+22,IAC Diplomata,3,4
+22,IAC Diplomata,4,4
+22,IAC Diplomata,5,4
+22,IAC Diplomata,6,4
+22,IAC Diplomata,7,4
+22,IAC Diplomata,8,4
+22,IAC Diplomata,9,4
+22,IAC Diplomata,10,3
+22,IAC Diplomata,11,3
+22,IAC Diplomata,12,4
+22,IAC Diplomata,13,2
+22,IAC Diplomata,14,4
+22,IAC Diplomata,15,NA
+23,IAC Kaburé,1,4
+23,IAC Kaburé,2,5
+23,IAC Kaburé,3,5
+23,IAC Kaburé,4,5
+23,IAC Kaburé,5,4
+23,IAC Kaburé,6,4
+23,IAC Kaburé,7,4
+23,IAC Kaburé,8,4
+23,IAC Kaburé,9,4
+23,IAC Kaburé,10,3
+23,IAC Kaburé,11,4
+23,IAC Kaburé,12,4
+23,IAC Kaburé,13,4
+23,IAC Kaburé,14,2
+23,IAC Kaburé,15,4
