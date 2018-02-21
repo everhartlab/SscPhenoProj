@@ -172,46 +172,11 @@ asum %>% ggplot(mapping = aes(x = 1, y=mean)) +
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 
+### Not sure why summarize is not able to report sd or se for these data ## still working on this 2/21/2018
+
+
 ################# Analysis of cultivar performance (variation in cultivars) ################################
-##### STOP HERE #########################################
 ################ stopped here ################
-
-
-(a.plot <- asum %>%
-    ggplot(mapping = aes(x = Isolate, y = mean)) + 
-    geom_point(na.rm = TRUE) +
-    geom_jitter(width = 0.1) +
-    theme_bw(base_size = 14) +
-    scale_x_discrete(limits= asum$Isolate[sort(asum$mean, index.return=T)$ix]))
-a.plot
-
-asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
-
-
-  
-  res$EC[grep("<=",x = res$EC)] <- NA
-res$EC <- as.numeric(res$EC)
-colnames(res)[8] <- "Antimicrobial"
-
-res2 <- res %>%
-  group_by(Antimicrobial) %>% 
-  mutate(outlier = boxplot.stats(EC)$stats[5]) %>% # the fifth element is going to be the maximum outlier
-  select(outlier, everything()) %>% 
-  filter(EC < outlier)
-
-res3 <- res2 %>%
-  group_by(Inoculum, Antimicrobial) %>%
-  summarize(n(), avg = mean(EC))  # obtaining the average EC-50 per isolate prior to summarizing below
-
-res4 <- res3 %>%
-  group_by(Antimicrobial) %>% 
-  summarize(n(), mean(avg), min(avg), max(avg), sd(avg))
-
-(res.plot <- res3 %>%
-    ggplot(mapping = aes(x = Antimicrobial, y = avg)) + 
-    geom_point(na.rm = TRUE) +
-    geom_jitter(width = 0.1) +
-    theme_bw(base_size = 14))  #### This produces a dot plot within the plots tab now
 
 
 
