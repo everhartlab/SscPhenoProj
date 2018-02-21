@@ -1,17 +1,20 @@
 #################### 
-if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
-library(devtools)
-library(ggpubr)
+# if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
+# library(devtools)
+# library(ggpubr)
 library(readxl)
-library(dplyr)
-library(magrittr)
-library(readr)
-library(ggplot2)
-library(PMCMR)
+library(tidyverse)
 library(plotrix)
-library(Hmisc)    
+# library(dplyr)
+# library(magrittr)
+# library(readr)
+# library(ggplot2)
+# library(PMCMR)
+# library(plotrix)
+# library(Hmisc)    
 library(grid)
 library(gridExtra)
+library(agricolae)
 ###################### Special note ###########################################
 # From net: "So with hmisc installed I have to do use dplyr::summarise. Unloading hmisc allowed dplyr:summarize to work."
 # Loading Hmisc after dplyr requires spelling summarize as summarise in script below
@@ -53,8 +56,9 @@ bgg <- cbind(bsum, proj = rep("b", length(bsum$sd)))
 cgg <- cbind(csum, proj = rep("c", length(csum$mean)))
 dgg <- cbind(dsum, proj = rep("d", length(dsum$mean)))
 
-dlb <- rbind(agg,cgg)
-st <- rbind(bgg,dgg)
+
+dlb <- bind_rows(agg, cgg)
+st <- bind_rows(bgg, dgg)
 
 p2 <- dlb %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
@@ -154,25 +158,11 @@ aproj3 <- filter(aproj, Collection == "third")
 # cv.model(model)
 # anova(model)
 
-#+
-    #geom_dotplot(binwidth=.2) +
- #   geom_dotplot(bins=length(mean)))
-
-ggplot2.dotplot(data=df, xName='dose',yName='len',
-                addBoxplot=TRUE,notch=TRUE)
-
-asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
-
-asum %>% ggplot(mapping = aes(x = 4, y=mean)) + geom_boxplot()
-
-asum %>% ggplot(mapping = aes(x = 1, y=mean)) +
-    geom_dotplot(stackdir = "center", binaxis = "y", binwidth = .1 , dotsize = 1, position = position_jitter(height=0, width=.02))
-
-
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
-csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
+csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(AUMPD, na.rm = TRUE), min = min(AUMPD, na.rm = TRUE), max = max(AUMPD, na.rm = TRUE), sd = sd(AUMPD, na.rm = TRUE))
 
 ### Not sure why summarize is not able to report sd or se for these data ## still working on this 2/21/2018
+### ZNK: Because Area is not a column in these data. You want AUMPD.
 
 
 ################# Analysis of cultivar performance (variation in cultivars) ################################
