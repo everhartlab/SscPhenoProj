@@ -1,6 +1,11 @@
 # SscPhenoProj
 
-Project characterizing Ssc phenotypes and cultivar performance
+This project contains the data and code used for analysis in:
+
+> Miorini TJJ, Higgins R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (201X)
+> Variation in pathogen aggression and cultivar performance against
+> _Sclerotinia sclerotiorum_ _In Preparation_
+
 
 # Data
 
@@ -17,10 +22,6 @@ eliminating the prefix "97". For example, isolates named 2A, 5B, 4D are actually
 972A, 975B, and 974D.
  - Isolates with prefix 972 do not exist in the Steadman collection.
  - Missing data are formatted as `.`, `#VALUE!`, or a blank cell.
-
-
-
-
 
 
 ### Sheet A
@@ -69,7 +70,7 @@ Straw test of 32 isolates on dry bean cultivar G122
 
 This sheet has a companion sheet called
 "Mensure and score in different days_straw test.csv" that contains data for each
-day after inoculation. 
+day after inoculation.
 
 ### Sheet C
 
