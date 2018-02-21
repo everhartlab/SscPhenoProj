@@ -158,23 +158,6 @@ aproj3 <- filter(aproj, Collection == "third")
 # cv.model(model)
 # anova(model)
 
-#+
-    #geom_dotplot(binwidth=.2) +
- #   geom_dotplot(bins=length(mean)))
-
-# ZNK: This doesn't exist in any of the packages listed above
-# ggplot2.dotplot(data=df, xName='dose',yName='len',
-#                 addBoxplot=TRUE,notch=TRUE)
-
-# ZNK: Maybe you want a histogram or density plot with a rug?
-asum %>% ggplot(mapping = aes(x = 1, y=mean)) + geom_boxplot()
-
-asum %>% ggplot(mapping = aes(x = 4, y=mean)) + geom_boxplot()
-
-asum %>% ggplot(mapping = aes(x = 1, y=mean)) +
-    geom_dotplot(stackdir = "center", binaxis = "y", binwidth = .1 , dotsize = 1, position = position_jitter(height=0, width=.02))
-
-
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(AUMPD, na.rm = TRUE), min = min(AUMPD, na.rm = TRUE), max = max(AUMPD, na.rm = TRUE), sd = sd(AUMPD, na.rm = TRUE))
 
