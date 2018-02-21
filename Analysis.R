@@ -56,16 +56,51 @@ iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286") %>
 
 # Analysis of aggressiveness (variation by isolate) -----------------------
 
-### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
-asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(),  mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
-
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
-asum <- aproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
-bsum <- bproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
-csum <- cproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(`48 horas`), min = min(`48 horas`), max = max(`48 horas`), sd = sd(`48 horas`))
-dsum <- dproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(Score), min = min(Score), max = max(Score), sd = sd(Score))
+asum <- aproj %>%
+  group_by(Isolate, Collection) %>%
+  summarise(
+    n = n(),
+    mean = mean(Area, na.rm = TRUE),
+    min = min(Area, na.rm = TRUE),
+    max = max(Area, na.rm = TRUE),
+    sd = sd(Area, na.rm = TRUE),
+    se = plotrix::std.error(Area, na.rm = TRUE)
+  )
+bsum <- bproj %>%
+  group_by(Isolate) %>%
+  summarise(
+    n = n(),
+    mean = mean(`8 dai (cm)`, na.rm = TRUE),
+    min = min(`8 dai (cm)`, na.rm = TRUE),
+    max = max(`8 dai (cm)`, na.rm = TRUE),
+    sd = sd(`8 dai (cm)`, na.rm = TRUE),
+    se = plotrix::std.error(`8 dai (cm)`, na.rm = TRUE)
+  )
+csum <- cproj %>%
+  group_by(Isolate, Collection) %>%
+  summarise(
+    n = n(),
+    mean = mean(`48 horas`, na.rm = TRUE),
+    min = min(`48 horas`, na.rm = TRUE),
+    max = max(`48 horas`, na.rm = TRUE),
+    sd = sd(`48 horas`, na.rm = TRUE),
+    se = plotrix::std.error(`48 horas`, na.rm = TRUE)
+  )
+dsum <- dproj %>%
+  group_by(Isolate) %>%
+  summarise(
+    n = n(),
+    mean = mean(Score, na.rm = TRUE),
+    min = min(Score, na.rm = TRUE),
+    max = max(Score, na.rm = TRUE),
+    sd = sd(Score, na.rm = TRUE),
+    se = plotrix::std.error(Score, na.rm = TRUE)
+  )
 
-agg <- tibble::add_column(asum, proj = rep(c("a1","a2","a3"), (length(asum$mean)/3))) %>% select(-Collection) %>% as.data.frame() ## added to distinguish each rep bc they're sig dif
+agg <- tibble::add_column(asum, proj = rep(c("a1","a2","a3"), (length(asum$mean)/3))) %>% 
+  select(-Collection) %>% 
+  as.data.frame() ## added to distinguish each rep bc they're sig dif
 bgg <- cbind(bsum, proj = rep("b", length(bsum$sd)))
 cgg <- cbind(csum, proj = rep("c", length(csum$mean)))
 dgg <- cbind(dsum, proj = rep("d", length(dsum$mean)))
@@ -170,5 +205,13 @@ aproj3 <- filter(aproj, Collection == "third")
 # anova(model)
 
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
-csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(AUMPD, na.rm = TRUE), min = min(AUMPD, na.rm = TRUE), max = max(AUMPD, na.rm = TRUE), sd = sd(AUMPD, na.rm = TRUE))
+  csum <-
+    cproj %>% group_by(Isolate) %>% summarize(
+      n = n(),
+      mean = mean(AUMPD, na.rm = TRUE),
+      min = min(AUMPD, na.rm = TRUE),
+      max = max(AUMPD, na.rm = TRUE),
+      sd = sd(AUMPD, na.rm = TRUE),
+      se = plotrix::std.error(AUMPD, na.rm = TRUE)
+    )
 
