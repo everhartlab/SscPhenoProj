@@ -26,13 +26,13 @@ ssc_summary
 # D       Straw test_28_isolates_IAC_Alv_Brazil 
 
 aproj <- read_excel(data_path, sheet = "A", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "DLB_SoyBean_Dassel.csv"))
+  readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
 bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385") %>%
-  readr::write_csv(path = here("clean_data", "ST_DryBean_G122.csv"))
+  readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
 cproj <- read_excel(data_path, sheet = "C", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "DLB_DryBean_IAC-Alvorada.csv"))
+  readr::write_csv(path = here("clean_data", "C_DLB_DryBean_IAC-Alvorada.csv"))
 dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "ST_DryBean_IAC-Alvorada.csv"))
+  readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 
 
 ## Evaluation of cultivars -------------------------------------------------
@@ -44,15 +44,15 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
 
 
 eproj <- read_excel(data_path, sheet = "E", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "DLB_Soybean_Cultivars.csv"))
+  readr::write_csv(path = here("clean_data", "E_DLB_Soybean_Cultivars.csv"))
 fproj <- read_excel(data_path, sheet = "F", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "DLB_DryBean_Cultivars-1.csv"))
+  readr::write_csv(path = here("clean_data", "F_DLB_DryBean_Cultivars-1.csv"))
 gproj <- read_excel(data_path, sheet = "G", na = excel_nas) %>%
-  readr::write_csv(path = here("clean_data", "DLB_DryBean_Cultivars-2.csv"))
+  readr::write_csv(path = here("clean_data", "G_DLB_DryBean_Cultivars-2.csv"))
 hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:F323")  %>% #trim last three cols
-  readr::write_csv(path = here("clean_data", "ST_DryBean_Cultivars-1.csv"))
+  readr::write_csv(path = here("clean_data", "H_ST_DryBean_Cultivars-1.csv"))
 iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286") %>% #trim last 4 cols
-  readr::write_csv(path = here("clean_data", "ST_DryBean_Cultivars-2.csv"))
+  readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
 # Analysis of aggressiveness (variation by isolate) -----------------------
 
