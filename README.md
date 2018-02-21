@@ -62,11 +62,14 @@ Straw test of 32 isolates on dry bean cultivar G122
 |:-----------------|:--------------------------------------------------------------------------------------------|
 | Isolate_number   | Row Number                                                                                  |
 | Isolate          | TJM isolate number                                                                          |
-| 8 dai (cm)       | Lesion length in centimeters 8 days after inoculuation                                      |
+| 8 dai (cm)       | Lesion length in centimeters 8 days after inoculation                                       |
 | AUDPC            | Area under the disease progress curve from evaluations at 3, 6 and 8 days after inoculation |
 | After first node | lesion length in centimeters after first node                                               |
 | Score            | Petzoldt & Dickson Straw Test Score (range: 1--9)                                           |
 
+This sheet has a companion sheet called
+"Mensure and score in different days_straw test.csv" that contains data for each
+day after inoculation. 
 
 ### Sheet C
 
