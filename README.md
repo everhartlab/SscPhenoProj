@@ -123,8 +123,8 @@ Detached Leaf Bioassay: Soybean cultivars
 |:------------|:--------------------------------------------------|
 | Exp_rep     | Experimental replicate                            |
 | Variety     | Numerical designator for soybean variety          |
+| Name        | Soybean variety name                              |
 | Rep         | Biological replicate                              |
-| Score       | Petzoldt & Dickson Straw Test Score (range: 1--9) |
 | Area        | Lesion Area (cm^2^)                               |
 
 ### Sheet F
