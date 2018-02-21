@@ -6,6 +6,12 @@ This project contains the data and code used for analysis in:
 > Variation in pathogen aggression and cultivar performance against
 > _Sclerotinia sclerotiorum_ _In Preparation_
 
+If you use any of the scripts or data, please cite the project on the Open Science Framework:
+
+> Miorini, T. J. J., Kamvar, Z. N., Everhart, S. E., & Steadman, J. (2018, February 21). 
+> Data and analysis for variation in pathogen aggression and cultivar performance 
+> against _Sclerotinia sclerotiorum_. Retrieved from osf.io/2x7fc 
+
 
 # Data
 
