@@ -1,50 +1,64 @@
-#################### 
-# if (!requireNamespace("devtools")) install.packages("devtools", repos = "https://cran.rstudio.com")
-# library(devtools)
-# library(ggpubr)
-library(readxl)
-library(tidyverse)
-library(plotrix)
-# library(dplyr)
-# library(magrittr)
-# library(readr)
-# library(ggplot2)
-# library(PMCMR)
-# library(plotrix)
-# library(Hmisc)    
-library(grid)
-library(gridExtra)
-library(agricolae)
-###################### Special note ###########################################
-# From net: "So with hmisc installed I have to do use dplyr::summarise. Unloading hmisc allowed dplyr:summarize to work."
-# Loading Hmisc after dplyr requires spelling summarize as summarise in script below
-# The error that this produces is "Error in summarize( ...) argument "by" is missing..."
-################# Reading raw data from Excel file ############################
-ssc_summary <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="Summary", na = c("", "NA"), col_names = FALSE)
-#%>% write_csv("Results-single.csv")
+# Analyses of variance for DLB and Straw Test results ------------------------
+# 
+# This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
+# 
+
+library("readxl")
+library("tidyverse")
+library("plotrix")
+library("grid")
+library("gridExtra")
+library("agricolae")
+library("here")
+dir.create(here("clean_data"))
+
+# Reading raw data from Excel file ----------------------------------------
+excel_nas   <- c("", "NA", ".", "#VALUE!")
+data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
+ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
-#### Evaluations of isolates:
-# A	70 isolates vs Dassel - soybean       ## partially resistant
-# B	Straw test_32 isolates_dry bean_G122  ## partially resistant
-# C	29 isolates vs IAC_Alvorada_DLB
-# D	Straw test_28_isolates_IAC_Alvorada_Brazil
 
-aproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="A",na = c("", "NA"))
-bproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="B",na = c("", "NA"), range="A1:F385") #trim last col
-bproj$`8 dai (cm)` <- as.numeric(bproj$`8 dai (cm)`)
-cproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="C",na = c("", "NA"))
-dproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="D",na = c("", "NA"))
-#### Evaluations of cultivars:
-eproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="E",na = c("", "NA"))
-fproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="F",na = c("", "NA"))
-gproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="G",na = c("", "NA")) 
-hproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="H",na = c("", "NA"), range="A1:F323") #trim last three cols
-iproj <- read_excel("Brazilian agressiveness_raw_data-final2.xlsx", sheet="I",na = c("", "NA"), range="A1:D286") #trim last 4 cols
+# Evaluation of isolates --------------------------------------------------
+# A       70 isolates vs Dassel - soybean       ## Partially resistant
+# B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
+# C       29 isolates vs IAC_DLB                
+# D       Straw test_28_isolates_IAC_Alv_Brazil 
 
-################# Analysis of aggressiveness (variation by isolate) ########################################
+aproj <- read_excel(data_path, sheet = "A", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "DLB_SoyBean_Dassel.csv"))
+bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385") %>%
+  readr::write_csv(path = here("clean_data", "ST_DryBean_G122.csv"))
+cproj <- read_excel(data_path, sheet = "C", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "DLB_DryBean_IAC-Alvorada.csv"))
+dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "ST_DryBean_IAC-Alvorada.csv"))
+
+
+## Evaluation of cultivars -------------------------------------------------
+# E       Soybean cultivars                                   
+# F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
+# G       Second exp_re_DLB_dry bean cultivars_2B             
+# H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
+# I       Second exp_rep_ strawtest_dry bean cultivars_2D 
+
+
+eproj <- read_excel(data_path, sheet = "E", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "DLB_Soybean_Cultivars.csv"))
+fproj <- read_excel(data_path, sheet = "F", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "DLB_DryBean_Cultivars-1.csv"))
+gproj <- read_excel(data_path, sheet = "G", na = excel_nas) %>%
+  readr::write_csv(path = here("clean_data", "DLB_DryBean_Cultivars-2.csv"))
+hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:F323")  %>% #trim last three cols
+  readr::write_csv(path = here("clean_data", "ST_DryBean_Cultivars-1.csv"))
+iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286") %>% #trim last 4 cols
+  readr::write_csv(path = here("clean_data", "ST_DryBean_Cultivars-2.csv"))
+
+# Analysis of aggressiveness (variation by isolate) -----------------------
+
 ### 70 isolaves vs. Dassel soybean in detached leaf assay  ######### may need to go back to here and remove outliers per isolate
 asum <- aproj %>% group_by(Isolate) %>% summarise(n = n(),  mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area), se = std.error(Area))
+
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
 asum <- aproj %>% group_by(Isolate, Collection) %>% summarise(n = n(), mean = mean(Area), min = min(Area), max = max(Area), sd = sd(Area))
 bsum <- bproj %>% group_by(Isolate) %>% summarise(n = n(), mean = mean(`8 dai (cm)`), min = min(`8 dai (cm)`), max = max(`8 dai (cm)`), sd = sd(`8 dai (cm)`))
@@ -97,8 +111,8 @@ grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
 # C	29 isolates vs IAC_DLB
 # D	Straw test_28_isolates_IAC_Alv_Brazil
 
-### LSD Test and ANOVA ######################################################
 
+# LSD Test and ANOVA ------------------------------------------------------
 ### Performed here using 10 observations per isolate and compared:
 # moda <- aov(Area~Collection, data=aproj)
 # outa <- LSD.test(moda, "Collection", p.adj="bonferroni")
@@ -130,9 +144,6 @@ aproj3 <- filter(aproj, Collection == "third")
   plot(outaa)
   anova(modaa)
 
-
-
-
 # ### Performed here using 10 observations per isolate and compared:
 # modc <- aov(`48 horas`~Collection, data=cproj)
 # outc <- LSD.test(modc, "Collection", p.adj="bonferroni")
@@ -160,14 +171,4 @@ aproj3 <- filter(aproj, Collection == "third")
 
 ### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
 csum <- cproj %>% group_by(Isolate) %>% summarize(n = n(), mean = mean(AUMPD, na.rm = TRUE), min = min(AUMPD, na.rm = TRUE), max = max(AUMPD, na.rm = TRUE), sd = sd(AUMPD, na.rm = TRUE))
-
-### Not sure why summarize is not able to report sd or se for these data ## still working on this 2/21/2018
-### ZNK: Because Area is not a column in these data. You want AUMPD.
-
-
-################# Analysis of cultivar performance (variation in cultivars) ################################
-################ stopped here ################
-
-
-
 
