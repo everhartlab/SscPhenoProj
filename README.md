@@ -70,7 +70,7 @@ Straw test of 32 isolates on dry bean cultivar G122
 
 ### Sheet C
 
-Detached Leaf Bioassay: 29 isolates vs IAC
+Detached Leaf Bioassay: 29 isolates vs IAC-Alvorada
 
  - 870 Rows
  - 11 Columns
@@ -92,7 +92,12 @@ Detached Leaf Bioassay: 29 isolates vs IAC
 
 ### Sheet D
 
-Straw test_28_isolates_IAC_Alv_Brazil
+Straw test: 28 isolates vs. IAC-Alvorada Brazil
+
+ - 308 Rows
+ - 4 Columns
+ - 28 isolates
+ - 11 replicates
 
 | Column Name    | Description                                       |
 |:---------------|:--------------------------------------------------|
@@ -105,6 +110,12 @@ Straw test_28_isolates_IAC_Alv_Brazil
 
 Detached Leaf Bioassay: Soybean cultivars
 
+ - 220 Rows
+ - 5 columns
+ - 11 varieties
+ - 10 biological replicates
+ - 2 experimental replicates
+
 | Column Name | Description                                       |
 |:------------|:--------------------------------------------------|
 | Exp_rep     | Experimental replicate                            |
@@ -115,7 +126,19 @@ Detached Leaf Bioassay: Soybean cultivars
 
 ### Sheet F
 
-First exp_rep_ DLB_dry bean cultivars_2B and 2D
+Detached Leaf Bioassay: First experimental replicate for dry bean cultivars
+
+This experiment was to determine which isolate was to be used for the DLB 972B
+or 972D. These were evaluated at different time points:
+
+Isolate 2B: up to 48 hpi
+Isolate 2D: up to 66 hpi
+
+ - 276 Rows
+ - 14 Columns
+ - 23 cultivars
+ - 12 replicates
+ - 69 blocks
 
 | Column Name     | Description                                                             |
 |:----------------|:------------------------------------------------------------------------|
@@ -136,12 +159,18 @@ First exp_rep_ DLB_dry bean cultivars_2B and 2D
 
 ### Sheet G
 
-Second exp_re_DLB_dry bean cultivars_2B
+Detached Leaf Bioassay: Second experimental replicate for dry bean cultivars with isolate 972B
+
+ - 276 Rows
+ - 9 Columns
+ - 23 cultivars
+ - 56 blocks
+ - 12 replicates
 
 | Column Name     | Description                                          |
 |:----------------|:-----------------------------------------------------|
 | Block           | Experimental block                                   |
-| Cultivar_number | Numerical desginator for dry bean variety            |
+| Cultivar_number | Numerical designator for dry bean variety            |
 | Cultivar_name   | Dry bean cultivar name                               |
 | 24              | lesion area in centimeters 24 hours post inoculation |
 | 30              | lesion area in centimeters 30 hours post inoculation |
@@ -152,7 +181,17 @@ Second exp_re_DLB_dry bean cultivars_2B
 
 ### Sheet H
 
-First exp_rep_strawtest_dry bean cultivars_2B and 2D
+Straw Test: First experimental replicate for dry bean cultivars
+
+This experiment was to determine which isolate was to be used for the Straw
+Test: 972B or 972D.
+
+ - 322 Rows
+ - 5 Columns
+ - 23 cultivars
+ - 7 replicates
+ - 2 isolates
+ - 13 blocks
 
 | Column Name | Description                                       |
 |:------------|:--------------------------------------------------|
@@ -164,7 +203,12 @@ First exp_rep_strawtest_dry bean cultivars_2B and 2D
 
 ### Sheet I
 
-Second exp_rep_ strawtest_dry bean cultivars_2D
+Straw Test: Second experimental replicate for dry bean cultivars with isolate 2D
+
+ - 285 Rows
+ - 4 columns
+ - 23 cultivars
+ - 15 replicates
 
 | Column Name | Description                                       |
 |:------------|:--------------------------------------------------|
