@@ -219,11 +219,12 @@ p3 <- st %>%
   sydney_theme
 
 aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h", 
+                                      rel_widths = c(2.75, 1),
                                       label_size = 16, 
                                       label_fontfamily = "Helvetica", 
-                                      label_x = c(0.18, 0.045),
+                                      label_x = c(0.13, 0.045),
                                       label_y = c(0.975, 0.975))
-
+aggressive_plot
 cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
                 plot = aggressive_plot,
                 width = 178, 
