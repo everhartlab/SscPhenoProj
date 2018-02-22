@@ -42,8 +42,7 @@ checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 library("tidyverse")
 library("readxl")
 library("plotrix")
-library("grid")
-library("gridExtra")
+library("cowplot")
 library("agricolae")
 library("here")
 library("sessioninfo")
@@ -134,8 +133,11 @@ iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286",
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
 #' Analysis of aggressiveness (variation by isolate) -----------------------
-
-### 70 isolaves vs. Dassel soybean in detached leaf assay
+#' 
+#' In this part, we will summarize values for each replicate and then use these
+#' to create a strip chart.
+#' 
+### 70 isolates vs. Dassel soybean in detached leaf assay
 asum <- aproj %>%
   group_by(Isolate, Collection) %>%
   summarise(
@@ -177,43 +179,68 @@ dsum <- dproj %>%
     se = plotrix::std.error(Score, na.rm = TRUE)
   )
 
-agg <- tibble::add_column(asum, proj = rep(c("a1","a2","a3"), (length(asum$mean)/3))) %>% 
-  select(-Collection) %>% 
-  as.data.frame() ## added to distinguish each rep bc they're sig dif
-bgg <- cbind(bsum, proj = rep("b", length(bsum$sd)))
-cgg <- cbind(csum, proj = rep("c", length(csum$mean)))
-dgg <- cbind(dsum, proj = rep("d", length(dsum$mean)))
+#' We want to create a single plot that contains both the results from the
+#' detached leaf bioassay AND the straw test per isolate (sheets A-D). 
+#' 
 
+dir.create(here("figures"))
 
-dlb <- bind_rows(agg, cgg)
-st <- bind_rows(bgg, dgg)
+dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
+  mutate(proj = case_when(
+    proj == "a" & Collection == "first"  ~ "Dassel (21 dae)",
+    proj == "a" & Collection == "second" ~ "Dassel (28 dae)",
+    proj == "a" & Collection == "third"  ~ "Dassel (35 dae)",
+    # Sydney grouped the "c" isolates together probably because of the smaller
+    # sample size. I'm showing them here to show how day doesn't matter.
+    proj == "c" & Collection == "first"  ~ "IAC-Alvorada (21 dae)",
+    proj == "c" & Collection == "second" ~ "IAC-Alvorada (28 dae)",
+    proj == "c" & Collection == "third"  ~ "IAC-Alvorada (35 dae)"
+  ))
+st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
 
+sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
+  theme(axis.title.x = element_blank()) +
+  theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black"))
+  
 p2 <- dlb %>%
   ggplot(mapping=aes(x=proj, y = mean)) +
   geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
-  ###  change fill to be equal to the origin of the isolate ==== Brazil or USA
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
-  ## there are several labeling features within labs() -- check help for more options
-  theme_minimal() +
-#  coord_fixed(ratio = 0.2) +
   labs(y = "Detached leaf bioassay") +
-  scale_x_discrete(labels=c("a1" = "Dassel.1","a2" = "Dassel.2","a3" = "Dassel.3", "c" = "IAC-Alvorada")) +
-  theme(axis.title.x = element_blank())
-
+  sydney_theme
+  
+p2
 p3 <- st %>%
-  ggplot(mapping=aes(x=proj, y = mean)) +
+  ggplot(mapping = aes(x = proj, y = mean)) +
   geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
   stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
-  theme_minimal() +
   scale_y_continuous(position = "right") +
   labs(y = "Straw test rating") +
-  scale_x_discrete(labels=c("b" = "G122", "d" = "IAC-Alvorada")) +
-  theme(axis.title.x = element_blank())
-grid.newpage()
-#grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
-#(arrangeGrob(p2,p3,ncol=2,widths=c(.8,.3)))
+  sydney_theme
 
-grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
+aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h", 
+                                      label_size = 16, 
+                                      label_fontfamily = "Helvetica", 
+                                      label_x = c(0.18, 0.045),
+                                      label_y = c(0.975, 0.975))
+
+cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
+                plot = aggressive_plot,
+                width = 178, 
+                height = 178*(0.621),
+                units = "mm")
+cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.tiff"), 
+                dpi = 900,
+                plot = aggressive_plot,
+                width = 178, 
+                height = 178*(0.621),
+                units = "mm")
+
+# grid.newpage()
+# #grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
+# #(arrangeGrob(p2,p3,ncol=2,widths=c(.8,.3)))
+# 
+# grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
 
 
 ######## need to decide what kind of plot to use and obtain same data for the other isolates

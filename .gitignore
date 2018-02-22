@@ -4,5 +4,6 @@
 .Ruserdata
 ~$an for data analysis.doc
 *.png
+*tiff
 .DS_Store
 .checkpoint/*/
