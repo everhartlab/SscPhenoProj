@@ -1,13 +1,13 @@
-# Analyses of variance for DLB and Straw Test results ------------------------
-# 
-# This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
-# 
-# Loading packages (and installing if needed) -----------------------------
-#
-# The checkpoint package is a fantastic package that will ensure reproducible
-# research by scanning your project for packages and then installing them to 
-# a temporary library from a specific date. This way you get non-invasive 
-# reproducibility (as long as MRAN continues to run).
+#' Analyses of variance for DLB and Straw Test results ------------------------
+#' 
+#' This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
+#' 
+#' Loading packages (and installing if needed) -----------------------------
+#'
+#' The checkpoint package is a fantastic package that will ensure reproducible
+#' research by scanning your project for packages and then installing them to 
+#' a temporary library from a specific date. This way you get non-invasive 
+#' reproducibility (as long as MRAN continues to run).
 
 if (!require("checkpoint")) {
   install.packages("checkpoint", repos = "https://cran.rstudio.com")
@@ -16,13 +16,13 @@ if (!require("checkpoint")) {
 dir.create(".checkpoint")
 checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 
-# Some of the output you can expect to see:
-# library("checkpoint")
+#' Some of the output you can expect to see:
+#' library("checkpoint")
 #>
 #> # checkpoint: Part of the Reproducible R Toolkit from Microsoft
 #> # https://mran.microsoft.com/documents/rro/reproducibility/
 #
-# checkpoint("2018-02-22")
+#' checkpoint("2018-02-22")
 #> Can I create directory~/.checkpointfor internal checkpoint use?
 #>   
 #>   Continue (y/n)? y
@@ -34,7 +34,7 @@ checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 #> - Installing ‘gridExtra’
 #> gridExtra
 #
-# ...
+#' ...
 #
 #> checkpoint process complete
 #> ---
@@ -49,18 +49,20 @@ library("here")
 library("sessioninfo")
 dir.create(here("clean_data"))
 
-# Reading raw data from Excel file ----------------------------------------
+#' Reading raw data from Excel file ----------------------------------------
+#' 
 excel_nas   <- c("", "NA", ".", "#VALUE!")
 data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
 ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
 
-# Evaluation of isolates --------------------------------------------------
-# A       70 isolates vs Dassel - soybean       ## Partially resistant
-# B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
-# C       29 isolates vs IAC_DLB                
-# D       Straw test_28_isolates_IAC_Alv_Brazil 
+#' Evaluation of isolates --------------------------------------------------
+#' 
+#' A       70 isolates vs Dassel - soybean       ## Partially resistant
+#' B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
+#' C       29 isolates vs IAC_DLB                
+#' D       Straw test_28_isolates_IAC_Alv_Brazil 
 
 aproj <- read_excel(data_path, sheet = "A", na = excel_nas) %>%
   readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
@@ -72,12 +74,12 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 
 
-## Evaluation of cultivars -------------------------------------------------
-# E       Soybean cultivars                                   
-# F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
-# G       Second exp_re_DLB_dry bean cultivars_2B             
-# H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
-# I       Second exp_rep_ strawtest_dry bean cultivars_2D 
+#' Evaluation of cultivars -------------------------------------------------
+#' E       Soybean cultivars                                   
+#' F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
+#' G       Second exp_re_DLB_dry bean cultivars_2B             
+#' H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
+#' I       Second exp_rep_ strawtest_dry bean cultivars_2D 
 
 
 eproj <- read_excel(data_path, sheet = "E", na = excel_nas) %>%
@@ -91,7 +93,7 @@ hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:F323")  %
 iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286") %>% #trim last 4 cols
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
-# Analysis of aggressiveness (variation by isolate) -----------------------
+#' Analysis of aggressiveness (variation by isolate) -----------------------
 
 ### 70 isolaves vs. Dassel soybean in detached leaf assay
 asum <- aproj %>%
@@ -177,15 +179,10 @@ grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
 ######## need to decide what kind of plot to use and obtain same data for the other isolates
 
 
-#### Evaluations of isolates:
-# A	70 isolates vs Dassel - soybean
-# B	Straw test_32 isolates_dry bean_G122
-# C	29 isolates vs IAC_DLB
-# D	Straw test_28_isolates_IAC_Alv_Brazil
+#' LSD Test and ANOVA ------------------------------------------------------
+#'
 
-
-# LSD Test and ANOVA ------------------------------------------------------
-### Performed here using 10 observations per isolate and compared:
+###  Performed here using 10 observations per isolate and compared:
 # moda <- aov(Area~Collection, data=aproj)
 # outa <- LSD.test(moda, "Collection", p.adj="bonferroni")
 # plot(outa)
@@ -253,7 +250,7 @@ aproj3 <- filter(aproj, Collection == "third")
     )
 
 
-# Session Information -----------------------------------------------------
+#' Session Information -----------------------------------------------------
 
   
 .libPaths() # R library location
