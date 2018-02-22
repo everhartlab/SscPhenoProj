@@ -254,38 +254,49 @@ cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.tiff"),
 
 
 #' LSD Test and ANOVA ------------------------------------------------------
-#'
+#' 
+#' R defaults to type I ANOVA, which is dependent on the order of the variables.
+#' The takeaway from this is that the variable we are interested in should be
+#' listed first. Any residual variance will be accounted for after the first
+#' variable is tested. 
+#' https://stats.stackexchange.com/a/20455/49413
+#' 
+#' By default, R treats the first sample as the control and creates the ANOVA
+#' model trying to find differences from the control. In our case, we want to
+#' use orthoganal contrasts:
+op <- options(contrasts = c("contr.helmert", "contr.poly"))
 
-###  Performed here using 10 observations per isolate and compared:
-# moda <- aov(Area~Collection, data=aproj)
-# outa <- LSD.test(moda, "Collection", p.adj="bonferroni")
-# plot(outa)
-# anova(moda)
+#' ## Detached Leaf Bioassay: Isolates
+#' 
+#' We want to assess whether or not there is a difference between isolates in
+#' our assay. Since there are different collection times, we also want to 
+#' include that in the model to confirm that there is no difference due to this
+#' factor. 
 
-### Performed here using 1 mean observation per isolate and compared:
+Dassel_anova <- aov(Area ~ Isolate * Collection, data = aproj)
+summary(Dassel_anova)
+Dassel_LSD <- LSD.test(Dassel_anova, "Isolate", p.adj = "bonferroni")
+plot(Dassel_LSD)
 
-modaa <- aov(mean~Isolate, data=asum)
-  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
-  plot(outaa)
-  anova(modaa)
+asum %>% 
+  group_by(Collection) %>% 
+  summarize(mean = mean(mean))
 
-aproj1 <- filter(aproj, Collection == "first")
-  modaa <- aov(Area~Isolate, data=aproj1)
-  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
-  plot(outaa)
-  anova(modaa)
+IAC_anova <- aov(`48 horas` ~ Isolate * Collection, data = cproj)
+summary(IAC_anova)
+IAC_LSD <- LSD.test(IAC_anova, "Isolate", p.adj = "bonferroni")
+plot(IAC_LSD)
 
-aproj2 <- filter(aproj, Collection == "second")
-  modaa <- aov(Area~Isolate, data=aproj2)
-  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
-  plot(outaa)
-  anova(modaa)
+csum %>%
+  group_by(Collection) %>%
+  summarize(mean = mean(mean, na.rm = TRUE))
 
-aproj3 <- filter(aproj, Collection == "third")
-  modaa <- aov(Area~Isolate, data=aproj3)
-  outaa <- LSD.test(modaa, "Isolate", p.adj="bonferroni")
-  plot(outaa)
-  anova(modaa)
+#' ## Straw Test: Isolates
+#' 
+#' Straw tests are not performed on varying tissue age, so we need only compare
+#' by isolate here. 
+
+
 
 # ### Performed here using 10 observations per isolate and compared:
 # modc <- aov(`48 horas`~Collection, data=cproj)
@@ -303,9 +314,9 @@ aproj3 <- filter(aproj, Collection == "third")
 # out2 <- LSD.test(model2,"Name", p.adj="bonferroni")
 # plot(out2)
 # 
-# model3 <- aov(`8 dai (cm)`~Isolate, data=bproj)
-# out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
-# plot(out3)
+G133xIsolate <- aov(`8 dai (cm)` ~ Isolate, data = bproj)
+out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
+plot(out3)
 
 ### ANOVA to compare groups:# 
 # model<-aov(yield~virus, data=sweetpotato)
