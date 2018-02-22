@@ -51,6 +51,13 @@ dir.create(here("clean_data"))
 
 #' Reading raw data from Excel file ----------------------------------------
 #' 
+#' To read in the excel data, we have to ignore four possible missing values.
+#' Additionally, we are enforcing column types in these data so isolate and
+#' cultivar numbers are represented as character data instead of numbers. 
+#' 
+#' Moreover, because of floating point conversion issues, all number are rounded
+#' to three decimal places as this is how they are represented in the 
+#' spreadsheet. 
 excel_nas   <- c("", "NA", ".", "#VALUE!")
 data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
 ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
@@ -64,13 +71,27 @@ ssc_summary
 #' C       29 isolates vs IAC_DLB                
 #' D       Straw test_28_isolates_IAC_Alv_Brazil 
 
-aproj <- read_excel(data_path, sheet = "A", na = excel_nas) %>%
+aproj <- read_excel(data_path, sheet = "A", na = excel_nas, 
+                    col_types = c("text", "text", "text", "text", "text", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
-bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385") %>%
+
+bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385",
+                    col_types = c("text", "text", "numeric", "numeric", 
+                                  "numeric", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
-cproj <- read_excel(data_path, sheet = "C", na = excel_nas) %>%
+
+cproj <- read_excel(data_path, sheet = "C", na = excel_nas,
+                    col_types = c("text", "text", "text", "text", "text", 
+                                  "numeric", "numeric", "numeric", "numeric", 
+                                  "numeric", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "C_DLB_DryBean_IAC-Alvorada.csv"))
-dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
+
+dproj <- read_excel(data_path, sheet = "D", na = excel_nas, 
+                    col_types = c("text", "text", "numeric", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 
 
@@ -82,15 +103,34 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas) %>%
 #' I       Second exp_rep_ strawtest_dry bean cultivars_2D 
 
 
-eproj <- read_excel(data_path, sheet = "E", na = excel_nas) %>%
+eproj <- read_excel(data_path, sheet = "E", na = excel_nas, 
+                    col_types = c("text", "text", "text","numeric", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "E_DLB_Soybean_Cultivars.csv"))
-fproj <- read_excel(data_path, sheet = "F", na = excel_nas) %>%
+
+fproj <- read_excel(data_path, sheet = "F", na = excel_nas, range = "A1:N277",
+                    col_types = c("text", "text", "text", "text", "numeric", 
+                                  "numeric", "numeric", "numeric", "numeric", 
+                                  "numeric", "numeric", "numeric", "numeric", 
+                                  "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "F_DLB_DryBean_Cultivars-1.csv"))
-gproj <- read_excel(data_path, sheet = "G", na = excel_nas) %>%
+
+gproj <- read_excel(data_path, sheet = "G", na = excel_nas, range = "A1:I277",
+                    col_types = c("text", "text", "text", "numeric", "numeric", 
+                                  "numeric", "numeric", "numeric", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "G_DLB_DryBean_Cultivars-2.csv"))
-hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:F323")  %>% #trim last three cols
+
+hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:E323", 
+                    col_types = c("text", "text", "text", "text", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "H_ST_DryBean_Cultivars-1.csv"))
-iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286") %>% #trim last 4 cols
+
+
+iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286", 
+                    col_types = c("text", "text", "text", "numeric")) %>%
+  dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
 #' Analysis of aggressiveness (variation by isolate) -----------------------

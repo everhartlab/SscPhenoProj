@@ -8,10 +8,15 @@ This project contains the data and code used for analysis in:
 
 If you use any of the scripts or data, please cite the project on the Open Science Framework:
 
-> Miorini, T. J. J., Kamvar, Z. N., Everhart, S. E., & Steadman, J. (2018, February 21). 
-> Data and analysis for variation in pathogen aggression and cultivar performance 
-> against _Sclerotinia sclerotiorum_. Retrieved from osf.io/2x7fc 
+> Miorini, T. J. J., Kamvar, Z. N., Everhart, S. E., & Steadman, J. (2018, February 21).
+> Data and analysis for variation in pathogen aggression and cultivar performance
+> against _Sclerotinia sclerotiorum_. Retrieved from osf.io/2x7fc
 
+# Analysis
+
+The analysis of variance calculations and plots are generated within the R
+script [`Analysis.R`](Analysis.R). This script makes a direct conversion between
+the Microsoft Excel file and csv files stored in the `clean_data` folder.
 
 # Data
 
@@ -19,7 +24,10 @@ The data within this repository exist across nine sheets within a Microsoft
 Excel file. Below, we will give details about the data contained within these
 sheets.
 
-## Brazillian agressiveness_raw_data-final2.xlsx
+## Brazilian agressiveness_raw_data-final2.xlsx
+
+This file contains 10 sheets, the first being a coded summary of each subsequent
+sheet, which are labeled A-I.
 
 ### Notes
 
