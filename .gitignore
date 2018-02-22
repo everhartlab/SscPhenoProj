@@ -5,3 +5,4 @@
 ~$an for data analysis.doc
 *.png
 .DS_Store
+.checkpoint/*/

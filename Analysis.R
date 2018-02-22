@@ -2,14 +2,51 @@
 # 
 # This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
 # 
+# Loading packages (and installing if needed) -----------------------------
+#
+# The checkpoint package is a fantastic package that will ensure reproducible
+# research by scanning your project for packages and then installing them to 
+# a temporary library from a specific date. This way you get non-invasive 
+# reproducibility (as long as MRAN continues to run).
 
-library("readxl")
+if (!require("checkpoint")) {
+  install.packages("checkpoint", repos = "https://cran.rstudio.com")
+  library("checkpoint")
+}
+dir.create(".checkpoint")
+checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
+
+# Some of the output you can expect to see:
+# library("checkpoint")
+#>
+#> # checkpoint: Part of the Reproducible R Toolkit from Microsoft
+#> # https://mran.microsoft.com/documents/rro/reproducibility/
+#
+# checkpoint("2018-02-22")
+#> Can I create directory~/.checkpointfor internal checkpoint use?
+#>   
+#>   Continue (y/n)? y
+#> Scanning for packages used in this project
+#> - Discovered 10 packages
+#> Installing packages used in this project 
+#> - Installing ‘agricolae’
+#> agricolae
+#> - Installing ‘gridExtra’
+#> gridExtra
+#
+# ...
+#
+#> checkpoint process complete
+#> ---
+
 library("tidyverse")
+library("readxl")
 library("plotrix")
 library("grid")
 library("gridExtra")
 library("agricolae")
 library("here")
+library("sessioninfo")
 dir.create(here("clean_data"))
 
 # Reading raw data from Excel file ----------------------------------------
@@ -215,3 +252,9 @@ aproj3 <- filter(aproj, Collection == "third")
       se = plotrix::std.error(AUMPD, na.rm = TRUE)
     )
 
+
+# Session Information -----------------------------------------------------
+
+  
+.libPaths() # R library location
+session_info()
