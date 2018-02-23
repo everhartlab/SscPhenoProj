@@ -111,7 +111,6 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas,
 # H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
 # I       Second exp_rep_ strawtest_dry bean cultivars_2D 
 
-
 eproj <- read_excel(data_path, sheet = "E", na = excel_nas, 
                     col_types = c("text", "text", "text","numeric", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
@@ -341,45 +340,23 @@ csum %>%
 # ## Straw Test: Isolates
 # 
 # Straw tests are not performed on varying tissue age, so we need only compare
-# by isolate here. 
+# by isolate here. We are treating each replicate as a random effect 
 
 
+# G133 by Isolate ---------------------------------------------------------
+G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
+anova(G133_model)
+G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model)
+# Isolate is significant
 
-# ### Performed here using 10 observations per isolate and compared:
-# modc <- aov(`48 horas`~Collection, data=cproj)
-# outc <- LSD.test(modc, "Collection", p.adj="bonferroni")
-# plot(outc)
-# anova(modc)            ### No significant difference
+# IAC-Alvorada by Isolate: Straw Test -------------------------------------
+IAC_ST_model <- lmer(Score ~ Isolate + (1 | Rep), data = dproj)
+anova(IAC_ST_model)
+ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model)
+# Isolate is significant, however, this is largely driven by one 
+# under-performing isolate.
 
-# ### Performed here using 1 mean observation per isolate and compared:
-# modcc <- aov(mean~Collection, data=csum)
-# outcc <- LSD.test(modcc, "Collection", p.adj="bonferroni")
-# plot(outcc)
-# anova(modcc)
-# 
-# model2<-aov(Area~Name, data=eproj)
-# out2 <- LSD.test(model2,"Name", p.adj="bonferroni")
-# plot(out2)
-# 
-G133xIsolate <- aov(`8 dai (cm)` ~ Isolate, data = bproj)
-out3 <- LSD.test(model3, "Isolate", p.adj="bonferroni")
-plot(out3)
 
-### ANOVA to compare groups:# 
-# model<-aov(yield~virus, data=sweetpotato)
-# cv.model(model)
-# anova(model)
-
-### 29 isolates vs. dry bean IAC Alvorada in detached leaf bioassay
-  csum <-
-    cproj %>% group_by(Isolate) %>% summarize(
-      n = n(),
-      mean = mean(AUMPD, na.rm = TRUE),
-      min = min(AUMPD, na.rm = TRUE),
-      max = max(AUMPD, na.rm = TRUE),
-      sd = sd(AUMPD, na.rm = TRUE),
-      se = plotrix::std.error(AUMPD, na.rm = TRUE)
-    )
 
 
 # Session Information -----------------------------------------------------
