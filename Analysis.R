@@ -139,6 +139,10 @@ hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:E323",
 iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286", 
                     col_types = c("text", "text", "text", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
+  dplyr::mutate(Cultivar = case_when(
+    Cultivar == "IPR139" ~ "IPR 139",
+    TRUE                 ~ Cultivar
+  )) %>% 
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
 # Analysis of aggressiveness (variation by isolate) -----------------------
