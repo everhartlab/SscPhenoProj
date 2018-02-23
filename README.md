@@ -22,7 +22,8 @@ the Microsoft Excel file and csv files stored in the `clean_data` folder.
 
 The data within this repository exist across nine sheets within a Microsoft
 Excel file. Below, we will give details about the data contained within these
-sheets.
+sheets. We are including data in this repository that was collected during the
+project, but not used in this publication.
 
 ## Brazilian agressiveness_raw_data-final2.xlsx
 
@@ -47,7 +48,7 @@ Detached Leaf Bioassay: 70 isolates vs Dassel on soybean.
  - 70 isolates
  - 10 replicates
  - 3 collection times
- - 4 sections?
+ - 4 sections
 
 | Column Name    | Description                                                         |
 |:---------------|:--------------------------------------------------------------------|
@@ -56,7 +57,7 @@ Detached Leaf Bioassay: 70 isolates vs Dassel on soybean.
 | Isolate number | Numeric isolate number relative to this analysis                    |
 | Isolate        | TJM isolate number                                                  |
 | Collection     | Collection time: first=21, second=28, third=35 days after emergence |
-| Area           | Lesion Area (cm^2^)                                                 |
+| Area           | Lesion Area (cm^2^) 48 hours after inoculuation                     |
 
 Isolate 1\* = from isolate 1 (P). This isolate has \* because TJM took sclerotia
 after he exposed this isolate in dicarboximide fungicide. It grew well in the
@@ -102,10 +103,10 @@ Detached Leaf Bioassay: 29 isolates vs IAC-Alvorada
 | Isolate_number | Experiment-specific number                                          |
 | Isolate        | TJM isolate number                                                  |
 | Collection     | Collection time: first=21, second=28, third=35 days after emergence |
-| 24 horas       | Lesion area in centimeters after 24 hours                           |
-| 30 horas       | Lesion area in centimeters after 30 hours                           |
-| 36 horas       | Lesion area in centimeters after 36 hours                           |
-| 48 horas       | Lesion area in centimeters after 48 hours                           |
+| 24 horas       | Lesion area in square centimeters after 24 hours                    |
+| 30 horas       | Lesion area in square centimeters after 30 hours                    |
+| 36 horas       | Lesion area in square centimeters after 36 hours                    |
+| 48 horas       | Lesion area in square centimeters after 48 hours                    |
 | AUMPD          | Area Under the Mycelial Progress Curve                              |
 
 ### Sheet D
@@ -140,7 +141,7 @@ Detached Leaf Bioassay: Soybean cultivars
 | Variety     | Numerical designator for soybean variety          |
 | Name        | Soybean variety name                              |
 | Rep         | Biological replicate                              |
-| Area        | Lesion Area (cm^2^)                               |
+| Area        | Lesion Area (cm^2^) 48 hours after inoculation    |
 
 ### Sheet F
 
