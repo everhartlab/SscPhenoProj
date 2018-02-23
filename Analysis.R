@@ -14,7 +14,7 @@ if (!require("checkpoint")) {
   library("checkpoint")
 }
 dir.create(".checkpoint")
-checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
+checkpoint(snapshotDate = "2018-02-23", checkpointLocation = ".")
 
 # Some of the output you can expect to see:
 # library("checkpoint")
@@ -305,7 +305,9 @@ Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni
 
 Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Collection:Isolate), data = aproj)
 anova(Dassel_model2)
+
 # Indeed it is significant
+
 Dassel_LSD2 <- myLSD(aproj$Area, aproj$Isolate, Dassel_model2, p.adj = "bonferroni")
 myLSD(aproj$Area, aproj$Collection, Dassel_model2, p.adj = "bonferroni")
 
@@ -382,3 +384,5 @@ plot(out3)
   
 .libPaths() # R library location
 session_info()
+library("pillar") # kludge to get this installed correctly by checkpoint
+
