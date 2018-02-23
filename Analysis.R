@@ -361,6 +361,18 @@ ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model)
 # under-performing isolate.
 
 
+# Cultivar tests ----------------------------------------------------------
+# 
+# Here we have three experiments that have to do with assessing if there is a
+# difference in resistance between cultivars. 
+# 
+#  - eproj - Detached Leaf Bioassay on 11 soybean cultivars with two 
+#      experimental replications at 34 dae and 60 dae
+#  - fproj & gproj Detached Leaf Bioassay on 23 Dry Bean cultivars. The first
+#      sheet represents testing of two isolates. 
+#  - hproj - Straw test on 23 Dry Bean cultivars to determine isolates for the
+#      experiment.
+#  - irpoj - Straw test on 19 Dry Bean cultivars.
 
 
 # Session Information -----------------------------------------------------
