@@ -86,6 +86,9 @@ bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385",
                     col_types = c("text", "text", "numeric", "numeric", 
                                   "numeric", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
+  dplyr::group_by(Isolate) %>%
+  dplyr::mutate(Rep = seq(n())) %>%
+  dplyr::ungroup() %>%
   readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
 
 cproj <- read_excel(data_path, sheet = "C", na = excel_nas,
