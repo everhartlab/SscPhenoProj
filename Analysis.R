@@ -39,13 +39,19 @@ checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 #> checkpoint process complete
 #> ---
 
-library("tidyverse")
-library("readxl")
-library("plotrix")
-library("cowplot")
-library("agricolae")
-library("here")
-library("sessioninfo")
+
+# Packages for analysis and graphing --------------------------------------
+library("tidyverse")   # data wrangling and rectangling + ggplot2
+library("readxl")      # read excel files
+library("plotrix")     # std.error() function
+library("cowplot")     # multi-panel plotting
+library("agricolae")   # LSD test
+library("lmerTest")    # random effects ANOVA
+
+# Packages of convenience -------------------------------------------------
+library("here")        # to burn setwd() to the ground
+library("sessioninfo") # to know where we stand
+
 dir.create(here("clean_data"))
 dir.create(here("figures"))
 
@@ -242,39 +248,86 @@ cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.tiff"),
 
 # LSD Test and ANOVA ------------------------------------------------------
 # 
-# R defaults to type I ANOVA, which is dependent on the order of the variables.
-# The takeaway from this is that the variable we are interested in should be
-# listed first. Any residual variance will be accounted for after the first
-# variable is tested. 
-# https://stats.stackexchange.com/a/20455/49413
+# We are using a random effects model due to the presence of blocks and leaf
+# age. This is implemented in the lmerTest package, which wraps lme4
 # 
 # By default, R treats the first sample as the control and creates the ANOVA
 # model trying to find differences from the control. In our case, we want to
 # use orthoganal contrasts:
 op <- options(contrasts = c("contr.helmert", "contr.poly"))
 
+#' Custom Least Significant Difference
+#' 
+#' Because LSD.test from agricolae only uses lm and aov models, I have to do
+#' some wrangling to get it to work for lmerTest objects. This helper function
+#' will do that for me. 
+#'
+#' @param response a vector of response variables used to build the model
+#' @param trt a vector with the treatment variable to be assessed
+#' @param model a model returned from lmer
+#' @param ...   arguments to be passed to LSD.test()
+#' @param plot  an argument of whether or not to plot the results (default: TRUE)
+#'
+#' @return
+#' 
+#' an object of class "group" from agricolae
+#' 
+myLSD <- function(response, trt, model, ..., plot = TRUE){
+  DFE <- df.residual(model) 
+  MSE <- deviance(model, REML = FALSE)/DFE
+  res <- LSD.test(y = response, trt = trt, DFerror = DFE, MSerror = MSE, ...)
+  plot(res, variation = "SE")
+  res
+}
 
-# DLB ANOVA: Isolate * Collection -----------------------------------------
+# Test DLB by Isolate -----------------------------------------------------
 # 
 # We want to assess whether or not there is a difference between isolates in
 # our assay. Since there are different leaf ages, we also want to include that 
 # in the model to confirm that there is no difference due to this factor.
 # 
-# Here we are analyzing the data sets for Dassel and IAC-Alvorada. 
+# Here we are analyzing the data sets for Dassel and IAC-Alvorada. Because we
+# want to test if there are differences between isolates themselves, but want to
+# account for the effects of Collection and the interaction of Collection and 
+# Isolate, we will code these as random effects by specifying 
+# (1 | Collection/Isolate), which indicates that Isolate is nested within 
+# Collection. 
 
-Dassel_anova <- aov(Area ~ Isolate * Collection, data = aproj)
-summary(Dassel_anova)
-Dassel_LSD <- LSD.test(Dassel_anova, "Isolate", p.adj = "bonferroni")
-plot(Dassel_LSD)
+# Dassel by Isolate -------------------------------------------------------
+Dassel_model <- lmer(Area ~ Isolate + (1 | Collection/Isolate), data = aproj)
+anova(Dassel_model)
+Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni")
+
+# From this, we can see that Isolate is significantly different. However, we
+# noticed earlier that there was a stark contrast between the collection times.
+# Here we can add collection time as a fixed effect in our model and see if it
+# is significant.
+
+Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Collection:Isolate), data = aproj)
+anova(Dassel_model2)
+# Indeed it is significant
+Dassel_LSD2 <- myLSD(aproj$Area, aproj$Isolate, Dassel_model2, p.adj = "bonferroni")
+myLSD(aproj$Area, aproj$Collection, Dassel_model2, p.adj = "bonferroni")
 
 asum %>% 
   group_by(Collection) %>% 
   summarize(mean = mean(mean))
 
-IAC_anova <- aov(`48 horas` ~ Isolate * Collection, data = cproj)
-summary(IAC_anova)
-IAC_LSD <- LSD.test(IAC_anova, "Isolate", p.adj = "bonferroni")
-plot(IAC_LSD)
+
+# IAC-Alvorada by Isolate -------------------------------------------------
+# Here, we are performing the same analysis with the IAC-Alvorada data. We don't
+# expect Collection to be significant in this model.
+IAC_model <- lmer(`48 horas` ~ Isolate + (1 | Collection/Isolate), data = cproj)
+anova(IAC_model)
+IAC_LSD <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model, p.adj = "bonferroni")
+
+# Again, because we saw the difference in Dassel if we considered leaf age, we
+# will set that as a fixed effect and test it here. 
+IAC_model2 <- lmer(`48 horas` ~ Isolate + Collection + (1 | Collection:Isolate), data = cproj)
+anova(IAC_model2)
+#
+# Based on the results here, we can conclude that leaf age does not have a 
+# significant effect on lesion area for IAC-Alvorada.
 
 csum %>%
   group_by(Collection) %>%
