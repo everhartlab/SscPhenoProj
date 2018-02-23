@@ -112,7 +112,7 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas,
 # I       Second exp_rep_ strawtest_dry bean cultivars_2D 
 
 eproj <- read_excel(data_path, sheet = "E", na = excel_nas, 
-                    col_types = c("text", "text", "text","numeric", "numeric")) %>%
+                    col_types = c("text", "text", "text","text", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "E_DLB_Soybean_Cultivars.csv"))
 
