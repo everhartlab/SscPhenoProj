@@ -1,13 +1,13 @@
-#' Analyses of variance for DLB and Straw Test results ------------------------
-#' 
-#' This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
-#' 
-#' Loading packages (and installing if needed) -----------------------------
-#'
-#' The checkpoint package is a fantastic package that will ensure reproducible
-#' research by scanning your project for packages and then installing them to 
-#' a temporary library from a specific date. This way you get non-invasive 
-#' reproducibility (as long as MRAN continues to run).
+# Analyses of variance for DLB and Straw Test results ------------------------
+# 
+# This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
+# 
+# Loading packages (and installing if needed) -----------------------------
+#
+# The checkpoint package is a fantastic package that will ensure reproducible
+# research by scanning your project for packages and then installing them to 
+# a temporary library from a specific date. This way you get non-invasive 
+# reproducibility (as long as MRAN continues to run).
 
 if (!require("checkpoint")) {
   install.packages("checkpoint", repos = "https://cran.rstudio.com")
@@ -16,13 +16,13 @@ if (!require("checkpoint")) {
 dir.create(".checkpoint")
 checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 
-#' Some of the output you can expect to see:
-#' library("checkpoint")
+# Some of the output you can expect to see:
+# library("checkpoint")
 #>
 #> # checkpoint: Part of the Reproducible R Toolkit from Microsoft
 #> # https://mran.microsoft.com/documents/rro/reproducibility/
 #
-#' checkpoint("2018-02-22")
+# checkpoint("2018-02-22")
 #> Can I create directory~/.checkpointfor internal checkpoint use?
 #>   
 #>   Continue (y/n)? y
@@ -34,7 +34,7 @@ checkpoint(snapshotDate = "2018-02-22", checkpointLocation = ".")
 #> - Installing ‘gridExtra’
 #> gridExtra
 #
-#' ...
+# ...
 #
 #> checkpoint process complete
 #> ---
@@ -47,28 +47,29 @@ library("agricolae")
 library("here")
 library("sessioninfo")
 dir.create(here("clean_data"))
+dir.create(here("figures"))
 
-#' Reading raw data from Excel file ----------------------------------------
-#' 
-#' To read in the excel data, we have to ignore four possible missing values.
-#' Additionally, we are enforcing column types in these data so isolate and
-#' cultivar numbers are represented as character data instead of numbers. 
-#' 
-#' Moreover, because of floating point conversion issues, all number are rounded
-#' to three decimal places as this is how they are represented in the 
-#' spreadsheet. 
+# Reading raw data from Excel file ----------------------------------------
+# 
+# To read in the excel data, we have to ignore four possible missing values.
+# Additionally, we are enforcing column types in these data so isolate and
+# cultivar numbers are represented as character data instead of numbers. 
+# 
+# Moreover, because of floating point conversion issues, all number are rounded
+# to three decimal places as this is how they are represented in the 
+# spreadsheet. 
 excel_nas   <- c("", "NA", ".", "#VALUE!")
 data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
 ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
 
-#' Evaluation of isolates --------------------------------------------------
-#' 
-#' A       70 isolates vs Dassel - soybean       ## Partially resistant
-#' B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
-#' C       29 isolates vs IAC_DLB                
-#' D       Straw test_28_isolates_IAC_Alv_Brazil 
+# Evaluation of isolates --------------------------------------------------
+# 
+# A       70 isolates vs Dassel - soybean       ## Partially resistant
+# B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
+# C       29 isolates vs IAC_DLB                
+# D       Straw test_28_isolates_IAC_Alv_Brazil 
 
 aproj <- read_excel(data_path, sheet = "A", na = excel_nas, 
                     col_types = c("text", "text", "text", "text", "text", "numeric")) %>%
@@ -94,12 +95,12 @@ dproj <- read_excel(data_path, sheet = "D", na = excel_nas,
   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 
 
-#' Evaluation of cultivars -------------------------------------------------
-#' E       Soybean cultivars                                   
-#' F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
-#' G       Second exp_re_DLB_dry bean cultivars_2B             
-#' H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
-#' I       Second exp_rep_ strawtest_dry bean cultivars_2D 
+# Evaluation of cultivars -------------------------------------------------
+# E       Soybean cultivars                                   
+# F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
+# G       Second exp_re_DLB_dry bean cultivars_2B             
+# H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
+# I       Second exp_rep_ strawtest_dry bean cultivars_2D 
 
 
 eproj <- read_excel(data_path, sheet = "E", na = excel_nas, 
@@ -132,11 +133,11 @@ iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286",
   dplyr::mutate_if(is.numeric, round, 3) %>%
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
 
-#' Analysis of aggressiveness (variation by isolate) -----------------------
-#' 
-#' In this part, we will summarize values for each replicate and then use these
-#' to create a strip chart.
-#' 
+# Analysis of aggressiveness (variation by isolate) -----------------------
+# 
+# In this part, we will summarize values for each replicate and then use these
+# to create a strip chart.
+# 
 ### 70 isolates vs. Dassel soybean in detached leaf assay
 asum <- aproj %>%
   group_by(Isolate, Collection) %>%
@@ -179,19 +180,15 @@ dsum <- dproj %>%
     se = plotrix::std.error(Score, na.rm = TRUE)
   )
 
-#' We want to create a single plot that contains both the results from the
-#' detached leaf bioassay AND the straw test per isolate (sheets A-D). 
-#' 
+# We want to create a single plot that contains both the results from the
+# detached leaf bioassay AND the straw test per isolate (sheets A-D). 
 
-dir.create(here("figures"))
 
 dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
   mutate(proj = case_when(
     proj == "a" & Collection == "first"  ~ "Dassel (21 dae)",
     proj == "a" & Collection == "second" ~ "Dassel (28 dae)",
     proj == "a" & Collection == "third"  ~ "Dassel (35 dae)",
-    # Sydney grouped the "c" isolates together probably because of the smaller
-    # sample size. I'm showing them here to show how day doesn't matter.
     proj == "c" & Collection == "first"  ~ "IAC-Alvorada (21 dae)",
     proj == "c" & Collection == "second" ~ "IAC-Alvorada (28 dae)",
     proj == "c" & Collection == "third"  ~ "IAC-Alvorada (35 dae)"
@@ -243,35 +240,27 @@ cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.tiff"),
                 height = 178*(0.621),
                 units = "mm")
 
-# grid.newpage()
-# #grid.draw(cbind(ggplotGrob(p2), ggplotGrob(p3), size = "last"))
-# #(arrangeGrob(p2,p3,ncol=2,widths=c(.8,.3)))
+# LSD Test and ANOVA ------------------------------------------------------
 # 
-# grid.arrange(p2, p3, nrow = 1, widths = c(2,1))
-
-
-######## need to decide what kind of plot to use and obtain same data for the other isolates
-
-
-#' LSD Test and ANOVA ------------------------------------------------------
-#' 
-#' R defaults to type I ANOVA, which is dependent on the order of the variables.
-#' The takeaway from this is that the variable we are interested in should be
-#' listed first. Any residual variance will be accounted for after the first
-#' variable is tested. 
-#' https://stats.stackexchange.com/a/20455/49413
-#' 
-#' By default, R treats the first sample as the control and creates the ANOVA
-#' model trying to find differences from the control. In our case, we want to
-#' use orthoganal contrasts:
+# R defaults to type I ANOVA, which is dependent on the order of the variables.
+# The takeaway from this is that the variable we are interested in should be
+# listed first. Any residual variance will be accounted for after the first
+# variable is tested. 
+# https://stats.stackexchange.com/a/20455/49413
+# 
+# By default, R treats the first sample as the control and creates the ANOVA
+# model trying to find differences from the control. In our case, we want to
+# use orthoganal contrasts:
 op <- options(contrasts = c("contr.helmert", "contr.poly"))
 
-#' ## Detached Leaf Bioassay: Isolates
-#' 
-#' We want to assess whether or not there is a difference between isolates in
-#' our assay. Since there are different collection times, we also want to 
-#' include that in the model to confirm that there is no difference due to this
-#' factor. 
+
+# DLB ANOVA: Isolate * Collection -----------------------------------------
+# 
+# We want to assess whether or not there is a difference between isolates in
+# our assay. Since there are different leaf ages, we also want to include that 
+# in the model to confirm that there is no difference due to this factor.
+# 
+# Here we are analyzing the data sets for Dassel and IAC-Alvorada. 
 
 Dassel_anova <- aov(Area ~ Isolate * Collection, data = aproj)
 summary(Dassel_anova)
@@ -291,10 +280,10 @@ csum %>%
   group_by(Collection) %>%
   summarize(mean = mean(mean, na.rm = TRUE))
 
-#' ## Straw Test: Isolates
-#' 
-#' Straw tests are not performed on varying tissue age, so we need only compare
-#' by isolate here. 
+# ## Straw Test: Isolates
+# 
+# Straw tests are not performed on varying tissue age, so we need only compare
+# by isolate here. 
 
 
 
@@ -335,7 +324,7 @@ plot(out3)
     )
 
 
-#' Session Information -----------------------------------------------------
+# Session Information -----------------------------------------------------
 
   
 .libPaths() # R library location
