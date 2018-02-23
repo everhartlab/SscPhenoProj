@@ -373,7 +373,104 @@ ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model)
 #  - hproj - Straw test on 23 Dry Bean cultivars to determine isolates for the
 #      experiment.
 #  - irpoj - Straw test on 19 Dry Bean cultivars.
+#
 
+# Soybean Variety Detached Leaf Bioassay ---------------------------------
+#
+# We can do a similar thing that we did in the assessments above. We will test
+# for differences between cultivars and use Experimental replicates and the
+# interaction with variety as the random effects
+soy_model <- lmer(Area ~ Name + (1 | Exp_rep/Name), data = eproj) # Hola, model! Soy Zhian. 
+anova(soy_model)
+soy_LSD <- myLSD(eproj$Area, eproj$Name, soy_model, p.adj = "bonferroni")
+
+# Notice, however that there appears to be an effect based on experimental 
+# replicate
+ggplot(eproj, aes(x = Name, y = Area, fill = Exp_rep)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(hjust = 1, vjust = 0.5, angle = 90))
+# The question then becomes, is it significant if we include it as a fixed
+# effect in our model?
+soy_model2 <- lmer(Area ~ Name + Exp_rep + (1 | Exp_rep:Name), data = eproj)
+anova(soy_model2)
+# Yes, it is significant
+soy_LSD2 <- myLSD(eproj$Area, eproj$Exp_rep, soy_model2, p.adj = "bonferroni")
+
+# Out of curiosity, what do the different experiments look like if we analye 
+# them separately with a milquetoast AMOVA?
+eproj %>% 
+  group_by(Exp_rep) %>%
+  summarize(model = list(aov(Area ~ Name) %>% anova() %>% broom::tidy())) %>%
+  unnest()
+# We get largely the same answer, which puts our minds at ease ^_^
+
+# Dry Bean Cultivar Detached Leaf Bioassay --------------------------------
+# 
+# This one is a bit tricky since there are two experimental replicates with
+# uneven blocks. TJM used a two-way AMOVA, but we are really only interested in
+# the difference between cultivars.
+
+# First, we must prepare the data by combining it with the same isolate.
+cultivar_DLB <- fproj %>%
+  filter(Isolate == "2B") %>% 
+  select(Block, Cultivar = Cultivar_name, AUMPC=`AUMPC (48)`)
+cultivar_DLB <- gproj %>%
+  select(Block, Cultivar = Cultivar_name, AUMPC) %>%
+  bind_rows(cultivar_DLB, .id = "Experiment")
+
+# Now for the modelling. We will once again nest Cultivar within Experiment, but
+# now that there are blocks that are not nested, we will treat them as random
+# effects on their own.
+cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + (1 | Experiment/Cultivar) + (1 | Block), data = cultivar_DLB)
+anova(cultivar_DLB_model)
+cultivar_DLB_LSD <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Cultivar, cultivar_DLB_model, p.adj = "bonferroni")
+
+# And we can visualize the effect of experiment
+ggplot(cultivar_DLB, aes(x = Cultivar, y = AUMPC, fill = Experiment)) + 
+  geom_boxplot()
+# We can see that there's not as strong of an effect due to experiment, and we 
+# can tickle our fancy by including this in our fixed effects
+cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + Experiment + (1 | Experiment:Cultivar) + (1 | Block), data = cultivar_DLB)
+anova(cultivar_DLB_model)
+cultivar_DLB_LSD2 <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Experiment, cultivar_DLB_model, p.adj = "bonferroni")
+# The effect is moderately significant
+
+
+# Dry Bean Cultivar Straw Test --------------------------------------------
+#
+# Similar to the Detached Leaf Bioassay, the straw tests were done in two
+# experiments. However, the first experiment included all of the cultivars, but
+# the second one only included those that showed resistance. We should account
+# for this when combining these data.
+
+# Organizing Data
+cultivar_ST <- hproj %>% 
+  filter(Isolate == "2D") %>%
+  select(-Isolate) %>%
+  bind_rows(iproj, .id = "Experiment")
+
+cultivars_to_keep <- cultivar_ST %>% 
+  count(Cultivar) %>%
+  arrange(n)
+cultivars_to_keep # we should remove the top 4.
+cultivars_to_keep <- filter(cultivars_to_keep, n > 7) %>% pull(Cultivar)
+cultivar_ST <- filter(cultivar_ST, Cultivar %in% cultivars_to_keep)
+
+# The Model
+cultivar_ST_model <- lmer(Score ~ Cultivar + (1 | Experiment/Cultivar) + (1 | Rep), data = cultivar_ST) 
+anova(cultivar_ST_model)
+cultivar_ST_LSD <- myLSD(cultivar_ST$Score, cultivar_ST$Cultivar, cultivar_ST_model, p.adj = "bonferroni")
+
+# The visualization
+ggplot(cultivar_ST, aes(x = Cultivar, y = Score, fill = Experiment)) + 
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+# There doesn't appear to be any significant effect of Experiment.
+cultivar_ST_model2 <- lmer(Score ~ Cultivar + Experiment + (1 | Experiment:Cultivar) + (1 | Rep), data = cultivar_ST) 
+anova(cultivar_ST_model2)
+cultivar_ST_LSD2 <- myLSD(cultivar_ST$Score, cultivar_ST$Experiment, cultivar_ST_model2, p.adj = "bonferroni")
+# The effect of experiment is not significant
 
 # Session Information -----------------------------------------------------
 
