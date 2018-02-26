@@ -8,14 +8,18 @@
 # research by scanning your project for packages and then installing them to 
 # a temporary library from a specific date. This way you get non-invasive 
 # reproducibility (as long as MRAN continues to run).
-
-if (!require("checkpoint")) {
-  install.packages("checkpoint", repos = "https://cran.rstudio.com")
-  library("checkpoint")
+#
+# This first if statement is asking whether or not we are inside a binder 
+# session. The binder session allows the analysis to be re-run interactively
+# in the cloud. If joyvan is run, the checkpoint package is not needed.
+if (Sys.getenv("USER") != "joyvan") {
+  if (!require("checkpoint")) {
+    install.packages("checkpoint", repos = "https://cran.rstudio.com")
+    library("checkpoint")
+  }
+  dir.create(".checkpoint")
+  checkpoint(snapshotDate = "2018-02-23", checkpointLocation = ".")
 }
-dir.create(".checkpoint")
-checkpoint(snapshotDate = "2018-02-23", checkpointLocation = ".")
-
 # Some of the output you can expect to see:
 # library("checkpoint")
 #>

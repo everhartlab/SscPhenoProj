@@ -18,6 +18,12 @@ The analysis of variance calculations and plots are generated within the R
 script [`Analysis.R`](Analysis.R). This script makes a direct conversion between
 the Microsoft Excel file and csv files stored in the `clean_data` folder.
 
+You can launch an interactive version of this analysis by clicking on this button: [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/everhartlab/SscPhenoProj/master?urlpath=rstudio)
+
+This will launch and RStudio instance on http://mybinder.org with all the 
+necessary packages installed. From there, you can open `Analysis.R` and run
+the analysis.
+
 # Data
 
 The data within this repository exist across nine sheets within a Microsoft
