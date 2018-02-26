@@ -12,7 +12,7 @@
 # This first if statement is asking whether or not we are inside a binder 
 # session. The binder session allows the analysis to be re-run interactively
 # in the cloud. If joyvan is run, the checkpoint package is not needed.
-if (Sys.getenv("USER") != "joyvan") {
+if (Sys.getenv("USER") != "jovyan") {
   if (!require("checkpoint")) {
     install.packages("checkpoint", repos = "https://cran.rstudio.com")
     library("checkpoint")
