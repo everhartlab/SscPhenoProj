@@ -350,15 +350,22 @@ csum %>%
 # G133 by Isolate ---------------------------------------------------------
 G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
 anova(G133_model)
-G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model)
+G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
 # Isolate is significant
 
 # IAC-Alvorada by Isolate: Straw Test -------------------------------------
 IAC_ST_model <- lmer(Score ~ Isolate + (1 | Rep), data = dproj)
 anova(IAC_ST_model)
-ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model)
+ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model, p.adj = "bonferroni")
 # Isolate is significant, however, this is largely driven by one 
-# under-performing isolate.
+# under-performing isolate (2D).
+
+dproj2 <- filter(dproj, Isolate != "2D")
+IAC_ST_model2 <- lmer(Score ~ Isolate + (1 | Rep), data = dproj2)
+anova(IAC_ST_model2)
+ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonferroni")
+# Isolate is significant, however, this is largely driven by one 
+# under-performing isolate (2D).
 
 
 # Cultivar tests ----------------------------------------------------------
