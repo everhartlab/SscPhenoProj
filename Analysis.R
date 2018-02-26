@@ -298,13 +298,12 @@ myLSD <- function(response, trt, model, ..., plot = TRUE){
 # 
 # Here we are analyzing the data sets for Dassel and IAC-Alvorada. Because we
 # want to test if there are differences between isolates themselves, but want to
-# account for the effects of Collection and the interaction of Collection and 
-# Isolate, we will code these as random effects by specifying 
-# (1 | Collection/Isolate), which indicates that Isolate is nested within 
-# Collection. 
+# account for the effects of Collection and section, we will code these as
+# random effects by specifying (1 | Collection) + (1 | Section), which accounts
+# for both of these before assessing Isolate. 
 
 # Dassel by Isolate -------------------------------------------------------
-Dassel_model <- lmer(Area ~ Isolate + (1 | Collection/Isolate), data = aproj)
+Dassel_model <- lmer(Area ~ Isolate + (1 | Collection) + (1 | Section), data = aproj)
 anova(Dassel_model)
 Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni")
 
@@ -313,7 +312,7 @@ Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni
 # Here we can add collection time as a fixed effect in our model and see if it
 # is significant.
 
-Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Collection:Isolate), data = aproj)
+Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Section), data = aproj)
 anova(Dassel_model2)
 
 # Indeed it is significant
@@ -329,13 +328,13 @@ asum %>%
 # IAC-Alvorada by Isolate -------------------------------------------------
 # Here, we are performing the same analysis with the IAC-Alvorada data. We don't
 # expect Collection to be significant in this model.
-IAC_model <- lmer(`48 horas` ~ Isolate + (1 | Collection/Isolate), data = cproj)
+IAC_model <- lmer(`48 horas` ~ Isolate + (1 | Collection) + (1 | Block), data = cproj)
 anova(IAC_model)
 IAC_LSD <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model, p.adj = "bonferroni")
 
 # Again, because we saw the difference in Dassel if we considered leaf age, we
 # will set that as a fixed effect and test it here. 
-IAC_model2 <- lmer(`48 horas` ~ Isolate + Collection + (1 | Collection:Isolate), data = cproj)
+IAC_model2 <- lmer(`48 horas` ~ Isolate + Collection + (1 | Block), data = cproj)
 anova(IAC_model2)
 #
 # Based on the results here, we can conclude that leaf age does not have a 
@@ -390,8 +389,8 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 #
 # We can do a similar thing that we did in the assessments above. We will test
 # for differences between cultivars and use Experimental replicates and the
-# interaction with variety as the random effects
-soy_model <- lmer(Area ~ Name + (1 | Exp_rep/Name), data = eproj) # Hola, model! Soy Zhian. 
+# replicate as the random effects
+soy_model <- lmer(Area ~ Name + (1 | Exp_rep) + (1 | Rep), data = eproj) # Hola, model! Soy Zhian. 
 anova(soy_model)
 soy_LSD <- myLSD(eproj$Area, eproj$Name, soy_model, p.adj = "bonferroni")
 
@@ -402,7 +401,7 @@ ggplot(eproj, aes(x = Name, y = Area, fill = Exp_rep)) +
   theme(axis.text.x = element_text(hjust = 1, vjust = 0.5, angle = 90))
 # The question then becomes, is it significant if we include it as a fixed
 # effect in our model?
-soy_model2 <- lmer(Area ~ Name + Exp_rep + (1 | Exp_rep:Name), data = eproj)
+soy_model2 <- lmer(Area ~ Name + Exp_rep + (1 | Rep), data = eproj)
 anova(soy_model2)
 # Yes, it is significant
 soy_LSD2 <- myLSD(eproj$Area, eproj$Exp_rep, soy_model2, p.adj = "bonferroni")
@@ -429,10 +428,9 @@ cultivar_DLB <- gproj %>%
   select(Block, Cultivar = Cultivar_name, AUMPC) %>%
   bind_rows(cultivar_DLB, .id = "Experiment")
 
-# Now for the modelling. We will once again nest Cultivar within Experiment, but
-# now that there are blocks that are not nested, we will treat them as random
-# effects on their own.
-cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + (1 | Experiment/Cultivar) + (1 | Block), data = cultivar_DLB)
+# Now for the modelling. We will once again treat Experiment and BLock as random
+# effects
+cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + (1 | Experiment) + (1 | Block), data = cultivar_DLB)
 anova(cultivar_DLB_model)
 cultivar_DLB_LSD <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Cultivar, cultivar_DLB_model, p.adj = "bonferroni")
 
@@ -441,8 +439,8 @@ ggplot(cultivar_DLB, aes(x = Cultivar, y = AUMPC, fill = Experiment)) +
   geom_boxplot()
 # We can see that there's not as strong of an effect due to experiment, and we 
 # can tickle our fancy by including this in our fixed effects
-cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + Experiment + (1 | Experiment:Cultivar) + (1 | Block), data = cultivar_DLB)
-anova(cultivar_DLB_model)
+cultivar_DLB_model2 <- lmer(AUMPC ~ Cultivar + Experiment + (1 | Block), data = cultivar_DLB)
+anova(cultivar_DLB_model2)
 cultivar_DLB_LSD2 <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Experiment, cultivar_DLB_model, p.adj = "bonferroni")
 # The effect is moderately significant
 
@@ -468,7 +466,7 @@ cultivars_to_keep <- filter(cultivars_to_keep, n > 7) %>% pull(Cultivar)
 cultivar_ST <- filter(cultivar_ST, Cultivar %in% cultivars_to_keep)
 
 # The Model
-cultivar_ST_model <- lmer(Score ~ Cultivar + (1 | Experiment/Cultivar) + (1 | Rep), data = cultivar_ST) 
+cultivar_ST_model <- lmer(Score ~ Cultivar + (1 | Experiment) + (1 | Rep), data = cultivar_ST) 
 anova(cultivar_ST_model)
 cultivar_ST_LSD <- myLSD(cultivar_ST$Score, cultivar_ST$Cultivar, cultivar_ST_model, p.adj = "bonferroni")
 
@@ -478,7 +476,7 @@ ggplot(cultivar_ST, aes(x = Cultivar, y = Score, fill = Experiment)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 # There doesn't appear to be any significant effect of Experiment.
-cultivar_ST_model2 <- lmer(Score ~ Cultivar + Experiment + (1 | Experiment:Cultivar) + (1 | Rep), data = cultivar_ST) 
+cultivar_ST_model2 <- lmer(Score ~ Cultivar + Experiment + (1 | Rep), data = cultivar_ST) 
 anova(cultivar_ST_model2)
 cultivar_ST_LSD2 <- myLSD(cultivar_ST$Score, cultivar_ST$Experiment, cultivar_ST_model2, p.adj = "bonferroni")
 # The effect of experiment is not significant
