@@ -8,7 +8,7 @@ This project contains the data and code used for analysis in:
 
 If you use any of the scripts or data, please cite the project on the Open Science Framework:
 
-> Miorini, T. J. J., Kamvar, Z. N., Everhart, S. E., & Steadman, J. (2018, February 21).
+> Miorini TJJ, Higgins R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (2018).
 > Data and analysis for variation in pathogen aggression and cultivar performance
 > against _Sclerotinia sclerotiorum_. Retrieved from osf.io/2x7fc
 
@@ -20,7 +20,7 @@ the Microsoft Excel file and csv files stored in the `clean_data` folder.
 
 You can launch an interactive version of this analysis by clicking on this button: [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/everhartlab/SscPhenoProj/master?urlpath=rstudio)
 
-This will launch and RStudio instance on http://mybinder.org with all the 
+This will launch and RStudio instance on http://mybinder.org with all the
 necessary packages installed. From there, you can open `Analysis.R` and run
 the analysis.
 
@@ -30,6 +30,25 @@ The data within this repository exist across nine sheets within a Microsoft
 Excel file. Below, we will give details about the data contained within these
 sheets. We are including data in this repository that was collected during the
 project, but not used in this publication.
+
+## Mensure and score in different days_straw test.csv
+
+This sheet contains straw test scores for 3, 6, and 8 days after inoculation
+for the detached leaf bioassay of dry bean cultivar G122. The area under the
+mycelial progress curve was calculated from these data.
+
+This is a companion file to Sheet B in `Brazilian agressiveness_raw_data-final2.xlsx`
+
+
+| Column Name      | Description                                                                                 |
+|:-----------------|:--------------------------------------------------------------------------------------------|
+| X1 (Blank name)  | TJM isolate number                                                                          |
+| Block            | Experimental Block                                                                          |
+| 3 dai            | Lesion length in centimeters 3 days after inoculation                                       |
+| 6 dai            | Lesion length in centimeters 6 days after inoculation                                       |
+| 8 dai            | Lesion length in centimeters 8 days after inoculation                                       |
+| AUDPC            | Area under the disease progress curve from evaluations at 3, 6 and 8 days after inoculation |
+| After first node | lesion length in centimeters after first node                                               |
 
 ## Brazilian agressiveness_raw_data-final2.xlsx
 
@@ -63,7 +82,7 @@ Detached Leaf Bioassay: 70 isolates vs Dassel on soybean.
 | Isolate number | Numeric isolate number relative to this analysis                    |
 | Isolate        | TJM isolate number                                                  |
 | Collection     | Collection time: first=21, second=28, third=35 days after emergence |
-| Area           | Lesion Area (cm^2^) 48 hours after inoculuation                     |
+| Area           | Lesion Area (cm^2^) 48 hours after inoculation                      |
 
 Isolate 1\* = from isolate 1 (P). This isolate has \* because TJM took sclerotia
 after he exposed this isolate in dicarboximide fungicide. It grew well in the
