@@ -1,0 +1,930 @@
+
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Analyses of variance for DLB and Straw Test results ------------------------
+> # 
+> # This script was written by Sydney E. Everhart and Zhian N. Kamvar. 
+> # 
+> # Loading packages (and installing if needed) -----------------------------
+> #
+> # The checkpoint package is a fantastic package that will ensure reproducible
+> # research by scanning your project for packages and then installing them to 
+> # a temporary library from a specific date. This way you get non-invasive 
+> # reproducibility (as long as MRAN continues to run).
+> #
+> # This first if statement is asking whether or not we are inside a binder 
+> # session. The binder session allows the analysis to be re-run interactively
+> # in the cloud. If joyvan is run, the checkpoint package is not needed.
+> if (Sys.getenv("USER") != "jovyan") {
++   if (!require("checkpoint")) {
++     install.packages("checkpoint", repos = "https://cran.rstudio.com")
++     library("checkpoint")
++   }
++   dir.create(".checkpoint")
++   checkpoint(snapshotDate = "2018-02-23", checkpointLocation = ".")
++ }
+Loading required package: checkpoint
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Scanning for packages used in this project
+- Discovered 13 packages
+All detected packages already installed
+checkpoint process complete
+---
+Warning message:
+In dir.create(".checkpoint") : '.checkpoint' already exists
+> # Some of the output you can expect to see:
+> # library("checkpoint")
+> #>
+> #> # checkpoint: Part of the Reproducible R Toolkit from Microsoft
+> #> # https://mran.microsoft.com/documents/rro/reproducibility/
+> #
+> # checkpoint("2018-02-22")
+> #> Can I create directory~/.checkpointfor internal checkpoint use?
+> #>   
+> #>   Continue (y/n)? y
+> #> Scanning for packages used in this project
+> #> - Discovered 10 packages
+> #> Installing packages used in this project 
+> #> - Installing ‘agricolae’
+> #> agricolae
+> #> - Installing ‘gridExtra’
+> #> gridExtra
+> #
+> # ...
+> #
+> #> checkpoint process complete
+> #> ---
+> 
+> 
+> # Packages for analysis and graphing --------------------------------------
+> library("tidyverse")   # data wrangling and rectangling + ggplot2
+── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──
+✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+✔ tibble  1.4.1     ✔ dplyr   0.7.4
+✔ tidyr   0.8.0     ✔ stringr 1.2.0
+✔ readr   1.1.1     ✔ forcats 0.3.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> library("readxl")      # read excel files
+> library("plotrix")     # std.error() function
+> library("cowplot")     # multi-panel plotting
+
+Attaching package: ‘cowplot’
+
+The following object is masked from ‘package:ggplot2’:
+
+    ggsave
+
+> library("agricolae")   # LSD test
+> library("lmerTest")    # random effects ANOVA
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following object is masked from ‘package:tidyr’:
+
+    expand
+
+Loading required package: lme4
+
+Attaching package: ‘lmerTest’
+
+The following object is masked from ‘package:lme4’:
+
+    lmer
+
+The following object is masked from ‘package:stats’:
+
+    step
+
+> 
+> # Packages of convenience -------------------------------------------------
+> library("here")        # to burn setwd() to the ground
+here() starts at /Users/zhian/Documents/Everhart/SscPhenoProj
+> library("sessioninfo") # to know where we stand
+> 
+> dir.create(here("clean_data"))
+Warning message:
+In dir.create(here("clean_data")) :
+  '/Users/zhian/Documents/Everhart/SscPhenoProj/clean_data' already exists
+> dir.create(here("figures"))
+Warning message:
+In dir.create(here("figures")) :
+  '/Users/zhian/Documents/Everhart/SscPhenoProj/figures' already exists
+> 
+> # Reading raw data from Excel file ----------------------------------------
+> # 
+> # To read in the excel data, we have to ignore four possible missing values.
+> # Additionally, we are enforcing column types in these data so isolate and
+> # cultivar numbers are represented as character data instead of numbers. 
+> # 
+> # Moreover, because of floating point conversion issues, all number are rounded
+> # to three decimal places as this is how they are represented in the 
+> # spreadsheet. 
+> excel_nas   <- c("", "NA", ".", "#VALUE!")
+> data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
+> ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
+> colnames(ssc_summary) <- c("sheetid", "projdesc")
+> ssc_summary
+# A tibble: 9 x 2
+  sheetid projdesc                                            
+  <chr>   <chr>                                               
+1 A       70 isolates vs Dassel - soybean                     
+2 B       Straw test_32 isolates_dry bean_G122                
+3 C       29 isolates vs IAC_DLB                              
+4 D       Straw test_28_isolates_IAC_Alv_Brazil               
+5 E       Soybean cultivars                                   
+6 F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
+7 G       Second exp_re_DLB_dry bean cultivars_2B             
+8 H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
+9 I       Second exp_rep_ strawtest_dry bean cultivars_2D     
+> 
+> # Evaluation of isolates --------------------------------------------------
+> # 
+> # A       70 isolates vs Dassel - soybean       ## Partially resistant
+> # B       Straw test_32 isolates_dry bean_G122  ## Partially resistant
+> # C       29 isolates vs IAC_DLB                
+> # D       Straw test_28_isolates_IAC_Alv_Brazil 
+> 
+> aproj <- read_excel(data_path, sheet = "A", na = excel_nas, 
++                     col_types = c("text", "text", "text", "text", "text", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
+> 
+> bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385",
++                     col_types = c("text", "text", "numeric", "numeric", 
++                                   "numeric", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   dplyr::group_by(Isolate) %>%
++   dplyr::mutate(Rep = seq(n())) %>%
++   dplyr::ungroup() %>%
++   readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
+> 
+> cproj <- read_excel(data_path, sheet = "C", na = excel_nas,
++                     col_types = c("text", "text", "text", "text", "text", 
++                                   "numeric", "numeric", "numeric", "numeric", 
++                                   "numeric", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "C_DLB_DryBean_IAC-Alvorada.csv"))
+> 
+> dproj <- read_excel(data_path, sheet = "D", na = excel_nas, 
++                     col_types = c("text", "text", "numeric", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
+> 
+> 
+> # Evaluation of cultivars -------------------------------------------------
+> # E       Soybean cultivars                                   
+> # F       First exp_rep_ DLB_dry bean cultivars_2B and 2D     
+> # G       Second exp_re_DLB_dry bean cultivars_2B             
+> # H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
+> # I       Second exp_rep_ strawtest_dry bean cultivars_2D 
+> 
+> eproj <- read_excel(data_path, sheet = "E", na = excel_nas, 
++                     col_types = c("text", "text", "text","text", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "E_DLB_Soybean_Cultivars.csv"))
+> 
+> fproj <- read_excel(data_path, sheet = "F", na = excel_nas, range = "A1:N277",
++                     col_types = c("text", "text", "text", "text", "numeric", 
++                                   "numeric", "numeric", "numeric", "numeric", 
++                                   "numeric", "numeric", "numeric", "numeric", 
++                                   "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "F_DLB_DryBean_Cultivars-1.csv"))
+> 
+> gproj <- read_excel(data_path, sheet = "G", na = excel_nas, range = "A1:I277",
++                     col_types = c("text", "text", "text", "numeric", "numeric", 
++                                   "numeric", "numeric", "numeric", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "G_DLB_DryBean_Cultivars-2.csv"))
+> 
+> hproj <- read_excel(data_path, sheet = "H",na = excel_nas, range = "A1:E323", 
++                     col_types = c("text", "text", "text", "text", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   readr::write_csv(path = here("clean_data", "H_ST_DryBean_Cultivars-1.csv"))
+> 
+> 
+> iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286", 
++                     col_types = c("text", "text", "text", "numeric")) %>%
++   dplyr::mutate_if(is.numeric, round, 3) %>%
++   dplyr::mutate(Cultivar = case_when(
++     Cultivar == "IPR139" ~ "IPR 139",
++     TRUE                 ~ Cultivar
++   )) %>% 
++   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
+> 
+> # Analysis of aggressiveness (variation by isolate) -----------------------
+> # 
+> # In this part, we will summarize values for each replicate and then use these
+> # to create a strip chart.
+> # 
+> ### 70 isolates vs. Dassel soybean in detached leaf assay
+> asum <- aproj %>%
++   group_by(Isolate, Collection) %>%
++   summarise(
++     n = n(),
++     mean = mean(Area, na.rm = TRUE),
++     min = min(Area, na.rm = TRUE),
++     max = max(Area, na.rm = TRUE),
++     sd = sd(Area, na.rm = TRUE),
++     se = plotrix::std.error(Area, na.rm = TRUE)
++   )
+> bsum <- bproj %>%
++   group_by(Isolate) %>%
++   summarise(
++     n = n(),
++     mean = mean(`8 dai (cm)`, na.rm = TRUE),
++     min = min(`8 dai (cm)`, na.rm = TRUE),
++     max = max(`8 dai (cm)`, na.rm = TRUE),
++     sd = sd(`8 dai (cm)`, na.rm = TRUE),
++     se = plotrix::std.error(`8 dai (cm)`, na.rm = TRUE)
++   )
+> csum <- cproj %>%
++   group_by(Isolate, Collection) %>%
++   summarise(
++     n = n(),
++     mean = mean(`48 horas`, na.rm = TRUE),
++     min = min(`48 horas`, na.rm = TRUE),
++     max = max(`48 horas`, na.rm = TRUE),
++     sd = sd(`48 horas`, na.rm = TRUE),
++     se = plotrix::std.error(`48 horas`, na.rm = TRUE)
++   )
+> dsum <- dproj %>%
++   group_by(Isolate) %>%
++   summarise(
++     n = n(),
++     mean = mean(Score, na.rm = TRUE),
++     min = min(Score, na.rm = TRUE),
++     max = max(Score, na.rm = TRUE),
++     sd = sd(Score, na.rm = TRUE),
++     se = plotrix::std.error(Score, na.rm = TRUE)
++   )
+> 
+> # We want to create a single plot that contains both the results from the
+> # detached leaf bioassay AND the straw test per isolate (sheets A-D). 
+> 
+> 
+> dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
++   mutate(proj = case_when(
++     proj == "a" & Collection == "first"  ~ "Dassel (21 dae)",
++     proj == "a" & Collection == "second" ~ "Dassel (28 dae)",
++     proj == "a" & Collection == "third"  ~ "Dassel (35 dae)",
++     proj == "c" & Collection == "first"  ~ "IAC-Alvorada (21 dae)",
++     proj == "c" & Collection == "second" ~ "IAC-Alvorada (28 dae)",
++     proj == "c" & Collection == "third"  ~ "IAC-Alvorada (35 dae)"
++   ))
+> st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
+> 
+> sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
++   theme(axis.text = element_text(color = "black")) +
++   theme(axis.title.x = element_blank()) +
++   theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black")) +
++   theme(panel.border = element_rect(size = 1))
+>   
+> p2 <- dlb %>%
++   ggplot(mapping=aes(x = proj, y = mean)) +
++   geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
++               fill = "white", size = 3.5, alpha = 2.5/4, stroke = 1) +
++   stat_summary(fun.y = mean, geom = "point", shape = 95, size = 17, color = "black") + 
++   labs(y = expression(paste("Detached leaf bioassay ", (cm^2) ))) +
++   sydney_theme
+>   
+> p2
+Warning messages:
+1: Removed 3 rows containing non-finite values (stat_summary). 
+2: Removed 3 rows containing missing values (geom_point). 
+> p3 <- st %>%
++   ggplot(mapping = aes(x = proj, y = mean)) +
++   geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
++               fill = "white", size = 3.5, alpha = 2.5/4, stroke = 1) +
++   stat_summary(fun.y = mean, geom = "point", shape = 95, size = 17, color = "black") + 
++   scale_y_continuous(position = "right", limits = c(1, 9), breaks = c(1, 3, 5, 7, 9)) +
++   labs(y = "Straw test rating") +
++   sydney_theme
+> 
+> aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h", 
++                                       rel_widths = c(2.75, 1),
++                                       label_size = 16, 
++                                       label_fontfamily = "Helvetica", 
++                                       label_x = c(A = 0.135, B = 0.045),
++                                       label_y = c(A = 0.975, B = 0.975))
+Warning messages:
+1: Removed 3 rows containing non-finite values (stat_summary). 
+2: Removed 3 rows containing missing values (geom_point). 
+> aggressive_plot
+> cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
++                 plot = aggressive_plot,
++                 width = 178, 
++                 height = 178*(0.621),
++                 units = "mm")
+> cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.png"), 
++                 plot = aggressive_plot,
++                 dpi = 600,
++                 width = 178, 
++                 height = 178*(0.621),
++                 units = "mm")
+> cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.tiff"), 
++                 dpi = 900,
++                 plot = aggressive_plot,
++                 width = 178, 
++                 height = 178*(0.621),
++                 units = "mm")
+> 
+> # LSD Test and ANOVA ------------------------------------------------------
+> # 
+> # We are using a random effects model due to the presence of blocks and leaf
+> # age. This is implemented in the lmerTest package, which wraps lme4
+> # 
+> # By default, R treats the first sample as the control and creates the ANOVA
+> # model trying to find differences from the control. In our case, we want to
+> # use orthoganal contrasts:
+> op <- options(contrasts = c("contr.helmert", "contr.poly"))
+> 
+> #' Custom Least Significant Difference
+> #' 
+> #' Because LSD.test from agricolae only uses lm and aov models, I have to do
+> #' some wrangling to get it to work for lmerTest objects. This helper function
+> #' will do that for me. 
+> #'
+> #' @param response a vector of response variables used to build the model
+> #' @param trt a vector with the treatment variable to be assessed
+> #' @param model a model returned from lmer
+> #' @param ...   arguments to be passed to LSD.test()
+> #' @param plot  an argument of whether or not to plot the results (default: TRUE)
+> #'
+> #' @return
+> #' 
+> #' an object of class "group" from agricolae
+> #' 
+> myLSD <- function(response, trt, model, ..., plot = TRUE){
++   DFE <- df.residual(model) 
++   MSE <- deviance(model, REML = FALSE)/DFE
++   res <- LSD.test(y = response, trt = trt, DFerror = DFE, MSerror = MSE, ...)
++   plot(res, variation = "SE")
++   res
++ }
+> 
+> # Test DLB by Isolate -----------------------------------------------------
+> # 
+> # We want to assess whether or not there is a difference between isolates in
+> # our assay. Since there are different leaf ages, we also want to include that 
+> # in the model to confirm that there is no difference due to this factor.
+> # 
+> # Here we are analyzing the data sets for Dassel and IAC-Alvorada. Because we
+> # want to test if there are differences between isolates themselves, but want to
+> # account for the effects of Collection and section, we will code these as
+> # random effects by specifying (1 | Collection) + (1 | Section), which accounts
+> # for both of these before assessing Isolate. 
+> 
+> # Dassel by Isolate -------------------------------------------------------
+> Dassel_model <- lmer(Area ~ Isolate + (1 | Collection) + (1 | Section), data = aproj)
+> anova(Dassel_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+        Sum Sq Mean Sq NumDF DenDF F.value   Pr(>F)    
+Isolate  10566  165.09    64 47.89  10.884 9.77e-15 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni")
+> 
+> # From this, we can see that Isolate is significantly different. However, we
+> # noticed earlier that there was a stark contrast between the collection times.
+> # Here we can add collection time as a fixed effect in our model and see if it
+> # is significant.
+> 
+> Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Section), data = aproj)
+> anova(Dassel_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+            Sum Sq Mean Sq NumDF   DenDF F.value    Pr(>F)    
+Isolate    10565.7   165.1    64   47.89  10.884  9.77e-15 ***
+Collection  6433.1  3216.5     2 2031.04 212.069 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> Dassel_LSD2 <- myLSD(aproj$Area, aproj$Isolate, Dassel_model2, p.adj = "bonferroni")
+> 
+> # Indeed it is significant, so we will now analyze each collection time
+> # separately.
+> 
+> aproj %>%
++   group_by(Collection) %>%
++   summarize(model = list(broom::tidy(anova(lmer(Area ~ Isolate + (1 | Section)))))) %>%
++   unnest()
+# A tibble: 3 x 8
+  Collection term    sumsq meansq NumDF DenDF statistic     p.value
+  <chr>      <chr>   <dbl>  <dbl> <int> <dbl>     <dbl>       <dbl>
+1 first      Isolate  5129   80.1    64   0        7.34 NaN        
+2 second     Isolate  6367   99.5    64 123       10.3    0        
+3 third      Isolate  7270  114      64  12.2     10.4    0.0000393
+Warning messages:
+1: In pf(F.stat, qr(Lc)$rank, nu.F) : NaNs produced
+2: In tidy.anova(anova(lmer(Area ~ Isolate + (1 | Section)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+3: In tidy.anova(anova(lmer(Area ~ Isolate + (1 | Section)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+4: In tidy.anova(anova(lmer(Area ~ Isolate + (1 | Section)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+> 
+> # Everything is significant while separating these out, so we can conclude that,
+> # while the experiments differed, they only differed in magnitude, but not 
+> # pattern. We can see the magnitude of how the experiments changed by looking 
+> # at the collection response, specifically.
+> 
+> myLSD(aproj$Area, aproj$Collection, Dassel_model2, p.adj = "bonferroni")
+$statistics
+   MSerror   Df     Mean      CV  t.value       MSD
+  5.722104 2031 9.309454 25.6953 2.395965 0.3063545
+
+$parameters
+        test  p.ajusted name.t ntr alpha
+  Fisher-LSD bonferroni    trt   3  0.05
+
+$means
+        response      std   r       LCL       UCL   Min    Max     Q25     Q50
+first  11.442549 4.307224 700 11.265238 11.619860 0.002 30.476 8.51950 11.6565
+second  9.330329 5.055385 700  9.153018  9.507640 0.000 25.697 5.58525  9.5875
+third   7.155486 5.004951 700  6.978175  7.332797 0.000 22.755 2.76675  6.5155
+            Q75
+first  14.52775
+second 13.06325
+third  10.83000
+
+$comparison
+NULL
+
+$groups
+        response groups
+first  11.442549      a
+second  9.330329      b
+third   7.155486      c
+
+attr(,"class")
+[1] "group"
+> 
+> asum %>% 
++   group_by(Collection) %>% 
++   summarize(mean = mean(mean))
+# A tibble: 3 x 2
+  Collection  mean
+  <chr>      <dbl>
+1 first      11.3 
+2 second      9.12
+3 third       7.13
+> 
+> 
+> # IAC-Alvorada by Isolate -------------------------------------------------
+> # Here, we are performing the same analysis with the IAC-Alvorada data. We don't
+> # expect Collection to be significant in this model.
+> IAC_model <- lmer(`48 horas` ~ Isolate + (1 | Collection) + (1 | Block), data = cproj)
+> anova(IAC_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+        Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
+Isolate  14188  525.48    27 712.21  20.468 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> IAC_LSD <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model, p.adj = "bonferroni")
+> 
+> # Again, because we saw the difference in Dassel if we considered leaf age, we
+> # will set that as a fixed effect and test it here. 
+> IAC_model2 <- lmer(`48 horas` ~ Isolate + Collection + (1 | Block), data = cproj)
+> anova(IAC_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+            Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
+Isolate    14200.3  525.94    27 711.88 20.4855 < 2.2e-16 ***
+Collection   299.8  149.90     2 776.31  5.8386  0.003042 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> IAC_LSD2 <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model2, p.adj = "bonferroni")
+> 
+> # Again, the collection time appears to be slightly significant, so we can check
+> # to see if this affected the outcome by separating the collections
+> 
+> cproj %>%
++   group_by(Collection) %>%
++   summarize(model = list(broom::tidy(anova(lmer(`48 horas` ~ Isolate + (1 | Block)))))) %>%
++   unnest()
+# A tibble: 3 x 8
+  Collection term    sumsq meansq NumDF DenDF statistic p.value
+  <chr>      <chr>   <dbl>  <dbl> <int> <dbl>     <dbl>   <dbl>
+1 first      Isolate  8490    327    26   226      23.1       0
+2 second     Isolate  4171    160    26   250      13.0       0
+3 third      Isolate  9646    371    26   253      17.3       0
+Warning messages:
+1: In tidy.anova(anova(lmer(`48 horas` ~ Isolate + (1 | Block)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+2: In tidy.anova(anova(lmer(`48 horas` ~ Isolate + (1 | Block)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+3: In tidy.anova(anova(lmer(`48 horas` ~ Isolate + (1 | Block)))) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+> 
+> # Okay, we can see that everything still appears significant after considering
+> # collection separately. 
+> IAC_LSD2 <- myLSD(cproj$`48 horas`, cproj$Collection, IAC_model2, p.adj = "bonferroni")
+> 
+> # It appears that the third collection time is different in magnitude from the 
+> # first two, but only at p = 0.003
+> csum %>%
++   group_by(Collection) %>%
++   summarize(mean = mean(mean, na.rm = TRUE))
+# A tibble: 3 x 2
+  Collection  mean
+  <chr>      <dbl>
+1 first       13.2
+2 second      13.7
+3 third       14.5
+> 
+> # Straw Test: Isolates
+> # 
+> # Straw tests are not performed on varying tissue age, so we need only compare
+> # by isolate here. We are treating each replicate as a random effect 
+> #
+> #
+> # G133 by Isolate ---------------------------------------------------------
+> G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
+> anova(G133_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+        Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
+Isolate 403.12  13.004    31 339.12  4.8854 3.797e-14 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
+> # Isolate is significant
+> 
+> # IAC-Alvorada by Isolate: Straw Test -------------------------------------
+> IAC_ST_model <- lmer(Score ~ Isolate + (1 | Rep), data = dproj)
+> anova(IAC_ST_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+        Sum Sq Mean Sq NumDF DenDF F.value    Pr(>F)    
+Isolate  341.1  12.633    27   280  11.458 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model, p.adj = "bonferroni")
+> # Isolate is significant, however, this is largely driven by one 
+> # under-performing isolate (2D).
+> 
+> dproj2 <- filter(dproj, Isolate != "2D")
+> IAC_ST_model2 <- lmer(Score ~ Isolate + (1 | Rep), data = dproj2)
+> anova(IAC_ST_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+        Sum Sq Mean Sq NumDF DenDF F.value    Pr(>F)    
+Isolate 111.76  4.2986    26   270  3.8664 7.694e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonferroni")
+> # Isolate is significant, however, this is largely driven by one 
+> # under-performing isolate (2D).
+> 
+> 
+> # Cultivar tests ----------------------------------------------------------
+> # =========================================================================
+> # 
+> # Here we have three experiments that have to do with assessing if there is a
+> # difference in resistance between cultivars. 
+> # 
+> #  - eproj - Detached Leaf Bioassay on 11 soybean cultivars with two 
+> #      experimental replications at 34 dae and 60 dae
+> #  - fproj & gproj Detached Leaf Bioassay on 23 Dry Bean cultivars. The first
+> #      sheet represents testing of two isolates. 
+> #  - hproj - Straw test on 23 Dry Bean cultivars to determine isolates for the
+> #      experiment.
+> #  - irpoj - Straw test on 19 Dry Bean cultivars.
+> #
+> 
+> # Soybean Variety Detached Leaf Bioassay ---------------------------------
+> #
+> # We can do a similar thing that we did in the assessments above. We will test
+> # for differences between cultivars and use Experimental replicates and the
+> # replicate as the random effects
+> soy_model <- lmer(Area ~ Name + (1 | Exp_rep) + (1 | Rep), data = eproj) # Hola, model! Soy Zhian. 
+> anova(soy_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+     Sum Sq Mean Sq NumDF DenDF F.value   Pr(>F)   
+Name 34.876  3.4876    10   199  2.4164 0.009834 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> soy_LSD <- myLSD(eproj$Area, eproj$Name, soy_model, p.adj = "bonferroni")
+> 
+> # Notice, however that there appears to be an effect based on experimental 
+> # replicate
+> ggplot(eproj, aes(x = Name, y = Area, fill = Exp_rep)) +
++   geom_boxplot() +
++   sydney_theme
+> # The question then becomes, is it significant if we include it as a fixed
+> # effect in our model?
+> soy_model2 <- lmer(Area ~ Name + Exp_rep + (1 | Rep), data = eproj)
+> anova(soy_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+         Sum Sq Mean Sq NumDF DenDF F.value    Pr(>F)    
+Name     34.876   3.488    10   199   2.416  0.009834 ** 
+Exp_rep 135.080 135.080     1   199  93.591 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> # Yes, it is significant
+> soy_LSD2 <- myLSD(eproj$Area, eproj$Exp_rep, soy_model2, p.adj = "bonferroni")
+> 
+> # What do the different experiments look like if we analyze them separately?
+> eproj %>% 
++   group_by(Exp_rep) %>%
++   summarize(model = list(lmer(Area ~ Name + (1 | Rep)) %>% anova() %>% broom::tidy())) %>%
++   unnest()
+# A tibble: 2 x 8
+  Exp_rep term  sumsq meansq NumDF DenDF statistic p.value
+  <chr>   <chr> <dbl>  <dbl> <int> <dbl>     <dbl>   <dbl>
+1 1       Name   24.5   2.45    10  90.0      1.63  0.110 
+2 2       Name   27.0   2.70    10  90.0      2.25  0.0217
+Warning messages:
+1: In tidy.anova(.) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+2: In tidy.anova(.) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+> # This is interesting. If we analyze these separately, then the results are not
+> # significant at p < 0.0001 or even p < 0.01. However, this could be due to 
+> # overdispersion of the data. 
+> 
+> # Dry Bean Cultivar Detached Leaf Bioassay --------------------------------
+> # 
+> # This one is a bit tricky since there are two experimental replicates with
+> # uneven blocks. TJM used a two-way AMOVA, but we are really only interested in
+> # the difference between cultivars.
+> 
+> # First, we must prepare the data by combining it with the same isolate.
+> cultivar_DLB <- fproj %>%
++   filter(Isolate == "2B") %>% 
++   select(Block, Cultivar = Cultivar_name, AUMPC=`AUMPC (48)`)
+> cultivar_DLB <- gproj %>%
++   select(Block, Cultivar = Cultivar_name, AUMPC) %>%
++   bind_rows(cultivar_DLB, .id = "Experiment")
+> 
+> # Now for the modelling. We will once again treat Experiment and BLock as random
+> # effects
+> cultivar_DLB_model <- lmer(AUMPC ~ Cultivar + (1 | Experiment) + (1 | Block), data = cultivar_DLB)
+> anova(cultivar_DLB_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+         Sum Sq Mean Sq NumDF  DenDF F.value   Pr(>F)    
+Cultivar 189210  8600.5    22 370.06   4.099 5.51e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> cultivar_DLB_LSD <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Cultivar, cultivar_DLB_model, p.adj = "bonferroni")
+> 
+> # And we can visualize the effect of experiment
+> ggplot(cultivar_DLB, aes(x = Cultivar, y = AUMPC, fill = Experiment)) + 
++   geom_boxplot() +
++   sydney_theme
+Warning message:
+Removed 3 rows containing non-finite values (stat_boxplot). 
+> # We can see that there's not as strong of an effect due to experiment, and we 
+> # can tickle our fancy by including this in our fixed effects
+> cultivar_DLB_model2 <- lmer(AUMPC ~ Cultivar + Experiment + (1 | Block), data = cultivar_DLB)
+> anova(cultivar_DLB_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+           Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
+Cultivar   189231    8601    22 369.87   4.099 5.504e-09 ***
+Experiment 104586  104586     1 382.50  49.845 7.888e-12 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> cultivar_DLB_LSD2 <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Experiment, cultivar_DLB_model, p.adj = "bonferroni")
+> # The effect is significant, so we will proceed to split the Experiments and
+> # analyze them separately
+> 
+> cultivar_DLB %>%
++   group_by(Experiment) %>%
++   summarize(model = list(lmer(AUMPC ~ Cultivar + (1 | Block)) %>% anova() %>% broom::tidy())) %>%
++   unnest()
+# A tibble: 2 x 8
+  Experiment term      sumsq meansq NumDF DenDF statistic              p.value
+  <chr>      <chr>     <dbl>  <dbl> <int> <dbl>     <dbl>                <dbl>
+1 1          Cultivar 227368  10335    22   224      7.23 0.000000000000000222
+2 2          Cultivar  62633   2847    22   103      1.15 0.306               
+Warning messages:
+1: In tidy.anova(.) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+2: In tidy.anova(.) :
+  The following column names in ANOVA output were not recognized or transformed: NumDF, DenDF
+> # This is quite revealing, but it shows what we see in the data visualization:
+> # the results are inconsistent between experiments, especially for IAC Diplomata,
+> # and IAC Una.
+> # 
+> # Dry Bean Cultivar Straw Test --------------------------------------------
+> #
+> # Similar to the Detached Leaf Bioassay, the straw tests were done in two
+> # experiments. However, the first experiment included all of the cultivars, but
+> # the second one only included those that showed resistance. We should account
+> # for this when combining these data.
+> 
+> # Organizing Data
+> cultivar_ST <- hproj %>% 
++   filter(Isolate == "2D") %>%
++   select(-Isolate) %>%
++   bind_rows(iproj, .id = "Experiment")
+> 
+> cultivars_to_keep <- cultivar_ST %>% 
++   count(Cultivar) %>%
++   arrange(n)
+> cultivars_to_keep # we should remove the top 4.
+# A tibble: 23 x 2
+   Cultivar            n
+   <chr>           <int>
+ 1 BRS Cometa          7
+ 2 IAC Formoso         7
+ 3 IPR Chopina         7
+ 4 IPR Quero-quero     7
+ 5 BRS Pontal         22
+ 6 BRS Requinte       22
+ 7 IAC Alvorada       22
+ 8 IAC Diplomata      22
+ 9 IAC Imperador      22
+10 IAC Kaburé         22
+# ... with 13 more rows
+> cultivars_to_keep <- filter(cultivars_to_keep, n > 7) %>% pull(Cultivar)
+> cultivar_ST <- filter(cultivar_ST, Cultivar %in% cultivars_to_keep)
+> 
+> # The Model
+> cultivar_ST_model <- lmer(Score ~ Cultivar + (1 | Experiment) + (1 | Rep), data = cultivar_ST) 
+> anova(cultivar_ST_model)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+         Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
+Cultivar 209.69   11.65    18 369.16  5.7021 5.172e-12 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> cultivar_ST_LSD <- myLSD(cultivar_ST$Score, cultivar_ST$Cultivar, cultivar_ST_model, p.adj = "bonferroni")
+> 
+> # The visualization
+> ggplot(cultivar_ST, aes(x = Cultivar, y = Score, fill = Experiment)) + 
++   geom_boxplot() +
++   sydney_theme +
++   scale_y_continuous(limits = c(1, 9), breaks = c(1, 3, 5, 7, 9))
+Warning message:
+Removed 29 rows containing non-finite values (stat_boxplot). 
+> 
+> # There doesn't appear to be any significant effect of Experiment.
+> cultivar_ST_model2 <- lmer(Score ~ Cultivar + Experiment + (1 | Rep), data = cultivar_ST) 
+> anova(cultivar_ST_model2)
+Analysis of Variance Table of type III  with  Satterthwaite 
+approximation for degrees of freedom
+            Sum Sq Mean Sq NumDF DenDF F.value    Pr(>F)    
+Cultivar   207.543 11.5302    18   369  5.6437 7.345e-12 ***
+Experiment   2.212  2.2123     1   369  1.0828    0.2987    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> cultivar_ST_LSD2 <- myLSD(cultivar_ST$Score, cultivar_ST$Experiment, cultivar_ST_model2, p.adj = "bonferroni")
+> # The effect of experiment is not significant
+> 
+> # Session Information -----------------------------------------------------
+> 
+>   
+> .libPaths() # R library location
+[1] "/Users/zhian/Documents/Everhart/SscPhenoProj/.checkpoint/2018-02-23/lib/x86_64-apple-darwin15.6.0/3.4.3"
+[2] "/Users/zhian/Documents/Everhart/SscPhenoProj/.checkpoint/R-3.4.3"                                       
+[3] "/Library/Frameworks/R.framework/Resources/library"                                                      
+> session_info()
+─ Session info ───────────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 3.4.3 (2017-11-30)
+ os       macOS High Sierra 10.13.3   
+ system   x86_64, darwin15.6.0        
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ tz       America/Chicago             
+ date     2018-02-27                  
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package      * version  date       source        
+ acepack        1.4.1    2016-10-29 CRAN (R 3.4.0)
+ agricolae    * 1.2-8    2017-09-12 CRAN (R 3.4.1)
+ AlgDesign      1.1-7.3  2014-10-15 CRAN (R 3.4.0)
+ assertthat     0.2.0    2017-04-11 cran (@0.2.0) 
+ backports      1.1.2    2017-12-13 CRAN (R 3.4.3)
+ base64enc      0.1-3    2015-07-28 CRAN (R 3.4.0)
+ bindr          0.1      2016-11-13 cran (@0.1)   
+ bindrcpp     * 0.2      2017-06-17 cran (@0.2)   
+ boot           1.3-20   2017-08-06 CRAN (R 3.4.3)
+ broom          0.4.3    2017-11-20 CRAN (R 3.4.3)
+ cellranger     1.1.0    2016-07-27 CRAN (R 3.4.0)
+ checkmate      1.8.5    2017-10-24 CRAN (R 3.4.2)
+ checkpoint   * 0.4.3    2017-12-19 CRAN (R 3.4.3)
+ cli            1.0.0    2017-11-05 CRAN (R 3.4.2)
+ clisymbols     1.2.0    2017-05-21 CRAN (R 3.4.0)
+ cluster        2.0.6    2017-03-10 CRAN (R 3.4.3)
+ coda           0.19-1   2016-12-08 CRAN (R 3.4.0)
+ colorspace     1.3-2    2016-12-14 CRAN (R 3.4.0)
+ combinat       0.0-8    2012-10-29 CRAN (R 3.4.0)
+ cowplot      * 0.9.2    2017-12-17 CRAN (R 3.4.3)
+ crayon         1.3.4    2017-09-16 cran (@1.3.4) 
+ data.table     1.10.4-3 2017-10-27 CRAN (R 3.4.2)
+ deldir         0.1-14   2017-04-22 CRAN (R 3.4.0)
+ digest         0.6.13   2017-12-14 CRAN (R 3.4.3)
+ dplyr        * 0.7.4    2017-09-28 CRAN (R 3.4.2)
+ expm           0.999-2  2017-03-29 CRAN (R 3.4.0)
+ forcats      * 0.3.0    2018-02-19 CRAN (R 3.4.3)
+ foreign        0.8-69   2017-06-22 CRAN (R 3.4.3)
+ Formula        1.2-2    2017-07-10 CRAN (R 3.4.1)
+ gdata          2.18.0   2017-06-06 CRAN (R 3.4.0)
+ ggplot2      * 2.2.1    2016-12-30 CRAN (R 3.4.0)
+ glue           1.2.0    2017-10-29 cran (@1.2.0) 
+ gmodels        2.16.2   2015-07-22 CRAN (R 3.4.0)
+ gridExtra      2.3      2017-09-09 CRAN (R 3.4.1)
+ gtable         0.2.0    2016-02-26 CRAN (R 3.4.0)
+ gtools         3.5.0    2015-05-29 CRAN (R 3.4.0)
+ haven          1.1.1    2018-01-18 CRAN (R 3.4.3)
+ here         * 0.1      2017-05-28 CRAN (R 3.4.0)
+ Hmisc          4.1-1    2018-01-03 CRAN (R 3.4.3)
+ hms            0.4.1    2018-01-24 CRAN (R 3.4.3)
+ htmlTable      1.11.2   2018-01-20 CRAN (R 3.4.3)
+ htmltools      0.3.6    2017-04-28 CRAN (R 3.4.0)
+ htmlwidgets    1.0      2018-01-20 CRAN (R 3.4.3)
+ httr           1.3.1    2017-08-20 CRAN (R 3.4.1)
+ jsonlite       1.5      2017-06-01 CRAN (R 3.4.0)
+ klaR           0.6-12   2014-08-06 CRAN (R 3.4.0)
+ knitr          1.18     2017-12-27 CRAN (R 3.4.3)
+ labeling       0.3      2014-08-23 CRAN (R 3.4.0)
+ lattice        0.20-35  2017-03-25 CRAN (R 3.4.3)
+ latticeExtra   0.6-28   2016-02-09 CRAN (R 3.4.0)
+ lazyeval       0.2.1    2017-10-29 CRAN (R 3.4.2)
+ LearnBayes     2.15     2014-05-29 CRAN (R 3.4.0)
+ lme4         * 1.1-15   2017-12-21 CRAN (R 3.4.3)
+ lmerTest     * 2.0-36   2017-11-30 CRAN (R 3.4.3)
+ lubridate      1.7.1    2017-11-03 cran (@1.7.1) 
+ magrittr       1.5      2014-11-22 CRAN (R 3.4.0)
+ MASS           7.3-48   2017-12-25 CRAN (R 3.4.3)
+ Matrix       * 1.2-12   2017-11-20 CRAN (R 3.4.3)
+ minqa          1.2.4    2014-10-09 CRAN (R 3.4.0)
+ mnormt         1.5-5    2016-10-15 CRAN (R 3.4.0)
+ modelr         0.1.1    2017-07-24 CRAN (R 3.4.1)
+ munsell        0.4.3    2016-02-13 CRAN (R 3.4.0)
+ nlme           3.1-131  2017-02-06 CRAN (R 3.4.3)
+ nloptr         1.0.4    2014-08-04 CRAN (R 3.4.0)
+ nnet           7.3-12   2016-02-02 CRAN (R 3.4.3)
+ pillar         1.1.0    2018-01-14 CRAN (R 3.4.3)
+ pkgconfig      2.0.1    2017-03-21 cran (@2.0.1) 
+ plotrix      * 3.7      2017-12-07 CRAN (R 3.4.3)
+ plyr           1.8.4    2016-06-08 CRAN (R 3.4.0)
+ psych          1.7.8    2017-09-09 CRAN (R 3.4.3)
+ purrr        * 0.2.4    2017-10-18 cran (@0.2.4) 
+ R6             2.2.2    2017-06-17 CRAN (R 3.4.0)
+ RColorBrewer   1.1-2    2014-12-07 CRAN (R 3.4.0)
+ Rcpp           0.12.14  2017-11-23 CRAN (R 3.4.3)
+ readr        * 1.1.1    2017-05-16 CRAN (R 3.4.0)
+ readxl       * 1.0.0    2017-04-18 CRAN (R 3.4.0)
+ rematch        1.0.1    2016-04-21 CRAN (R 3.4.0)
+ reshape2       1.4.3    2017-12-11 CRAN (R 3.4.3)
+ rlang          0.1.6    2017-12-21 CRAN (R 3.4.3)
+ rpart          4.1-11   2017-03-13 CRAN (R 3.4.3)
+ rprojroot      1.3-2    2018-01-03 CRAN (R 3.4.3)
+ rstudioapi     0.7      2017-09-07 CRAN (R 3.4.1)
+ rvest          0.3.2    2016-06-17 CRAN (R 3.4.0)
+ scales         0.5.0    2017-08-24 CRAN (R 3.4.1)
+ sessioninfo  * 1.0.0    2017-06-21 CRAN (R 3.4.1)
+ sp             1.2-7    2018-01-19 CRAN (R 3.4.3)
+ spData         0.2.7.4  2018-02-11 CRAN (R 3.4.3)
+ spdep          0.7-4    2017-11-22 CRAN (R 3.4.3)
+ stringi        1.1.6    2017-11-17 CRAN (R 3.4.2)
+ stringr      * 1.2.0    2017-02-18 CRAN (R 3.4.0)
+ survival       2.41-3   2017-04-04 CRAN (R 3.4.3)
+ tibble       * 1.4.1    2017-12-25 CRAN (R 3.4.3)
+ tidyr        * 0.8.0    2018-01-29 CRAN (R 3.4.3)
+ tidyselect     0.2.3    2017-11-06 CRAN (R 3.4.2)
+ tidyverse    * 1.2.1    2017-11-14 CRAN (R 3.4.2)
+ utf8           1.1.3    2018-01-03 CRAN (R 3.4.3)
+ withr          2.1.1    2017-12-19 CRAN (R 3.4.3)
+ xml2           1.2.0    2018-01-24 CRAN (R 3.4.3)
+> library("pillar") # kludge to get this installed correctly by checkpoint
+
+Attaching package: ‘pillar’
+
+The following object is masked from ‘package:dplyr’:
+
+    dim_desc
+
+> 
+> 
