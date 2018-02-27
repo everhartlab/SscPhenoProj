@@ -397,6 +397,35 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 # Isolate is significant, however, this is largely driven by one 
 # under-performing isolate (2D).
 
+# Summary table across isolates -------------------------------------------
+# 
+# It would be nice to find out if there are any isolates that are consistently
+# outperforming all other isolates. Here, I will create a table that aggregates
+# the isolate means per experiment. 
+isolate_data <- bind_rows(`Dassel DLB`              = asum, 
+                          `IAC-Alvorada DLB`        = csum, 
+                          `G133 Straw Test`         = bsum, 
+                          `IAC-Alvorada Straw Test` = dsum,
+                          .id = "Experiment")
+isolate_summary <- isolate_data %>% 
+  group_by(Experiment, Collection) %>%
+  summarize(Min  = round(min(min), 3), 
+            Mean = round(mean(mean, na.rm = TRUE), 3), 
+            Max  = round(max(max), 3), 
+            `Top 10` = list(
+              data_frame(
+                Isolate        = head(Isolate[order(mean, decreasing = TRUE)], 10),
+                `Isolate Mean` = head(sort(mean, decreasing = TRUE), 10),
+                rank           = 1:10
+                )
+              )) %>%
+  arrange(grepl("Straw", Experiment))
+
+dir.create(here("tables"))
+isolate_summary_print <- isolate_summary %>%
+  rowwise() %>%
+  mutate(`Top 10` = paste(`Top 10`$Isolate, collapse = ", ")) %>%
+  readr::write_csv(here("tables/isolate_summary.csv"))
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================

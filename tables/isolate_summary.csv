@@ -1,0 +1,9 @@
+Experiment,Collection,Min,Mean,Max,Top 10
+Dassel DLB,first,0.002,11.267,30.476,"143, 1019, 6, 4C, 293B, 267, 1022, 834A, 1021, 1016"
+Dassel DLB,second,0,9.121,25.697,"4C, 143, 1016, 6, 541B, 8, 13, 1019, 1023, 6B"
+Dassel DLB,third,0,7.131,22.755,"5, 1, 6B, 7B, 3D, 3, 4C, 1013, 267, 293B"
+IAC-Alvorada DLB,first,0.002,13.246,34.103,"5C, 8E, 6C, 5A, 5B, 8C, 8A, 6D, 6E, 7C"
+IAC-Alvorada DLB,second,0.195,13.655,29.726,"6D, 8C, 7A, 8E, 6A, 5C, 5B, 8A, 3D, 7C"
+IAC-Alvorada DLB,third,0.002,14.481,32.276,"8C, 6B, 6D, 7E, 4C, 7A, 5D, 2B, 5E, 3A"
+G133 Straw Test,NA,0,5.736,13,"6B, 834B, 143, 1010, 3D, 3C, 7B, 5D, 6C, 3B"
+IAC-Alvorada Straw Test,NA,1,7.847,9,"3C, 5C, 5D, 6E, 5E, 6B, 7B, 3A, 7C, 2B"
