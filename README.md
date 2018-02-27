@@ -82,9 +82,10 @@ This is a companion file to Sheet B in `Brazilian agressiveness_raw_data-final2.
 | AUDPC            | Area under the disease progress curve from evaluations at 3, 6 and 8 days after inoculation |
 | After first node | lesion length in centimeters after first node                                               |
 
+> Corresponding clean data: [B_ST_DryBean_G122.csv](clean_data/B_ST_DryBean_G122.csv)
+
 ## Brazilian agressiveness_raw_data-final2.xlsx
 
-> Corresponding clean data: [B_ST_DryBean_G122.csv](clean_data/B_ST_DryBean_G122.csv)
 
 This file contains 10 sheets, the first being a coded summary of each subsequent
 sheet, which are labeled A-I.
