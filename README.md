@@ -1,4 +1,4 @@
-# SscPhenoProj
+# _Sclerotinia sclerotiorum_ Phenotyping Project
 
 This project contains the data and code used for analysis in:
 
@@ -14,15 +14,42 @@ If you use any of the scripts or data, please cite the project on the Open Scien
 
 # Analysis
 
+## Overview
+
 The analysis of variance calculations and plots are generated within the R
 script [`Analysis.R`](Analysis.R). This script makes a direct conversion between
-the Microsoft Excel file and csv files stored in the `clean_data` folder.
+the Microsoft Excel file and csv files stored in the `clean_data` folder and
+creates the [Analsysis.Rout](Analysis.Rout) file.
 
-You can launch an interactive version of this analysis by clicking on this button: [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/everhartlab/SscPhenoProj/master?urlpath=rstudio)
+## Running the Analyses
 
-This will launch and RStudio instance on http://mybinder.org with all the
+#### On your computer
+
+All package versions are locked to 2018-02-23 with the
+[checkpoint](https://CRAN.R-project.org/package=checkpoint) package, which will
+automatically install all of the required packages locally before the analysis
+is run. It is assumed you have R version 3.4.3. To run this analysis, you can
+open it in RStudio and click "source", or, from the command line, you can use:
+
+```sh
+$ R -f Analysis.R &> Analysis.Rout
+```
+
+
+#### On the cloud
+
+Alternatively, you can launch an interactive version of this analysis on
+https://mybinder.org by clicking on this button: [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/everhartlab/SscPhenoProj/master?urlpath=rstudio)
+
+This will launch and RStudio instance on https://mybinder.org with all the
 necessary packages installed. From there, you can open `Analysis.R` and run
-the analysis.
+the analysis. Please note, however, that this integration is in Beta and may
+change in the future. Be aware that it may take some time to build the image
+before you can inspect the data and analyses.
+
+> Note: as of 2017-02-26, there was an issue with binder not adding the correct
+> path to the R library. There is a workaround by typing
+> `.libPaths("/srv/rlibs")` in the RStudio console once it loads.
 
 # Data
 
@@ -30,6 +57,11 @@ The data within this repository exist across nine sheets within a Microsoft
 Excel file. Below, we will give details about the data contained within these
 sheets. We are including data in this repository that was collected during the
 project, but not used in this publication.
+
+All the raw data are stored in the top level of this repository. Processed data
+are placed in the folder called `clean_data`. The data are cleaned in the first
+part of the R script and track changes should confirm that no data were changed
+in the cleaning process.
 
 ## Mensure and score in different days_straw test.csv
 
@@ -52,6 +84,8 @@ This is a companion file to Sheet B in `Brazilian agressiveness_raw_data-final2.
 
 ## Brazilian agressiveness_raw_data-final2.xlsx
 
+> Corresponding clean data: [B_ST_DryBean_G122.csv](clean_data/B_ST_DryBean_G122.csv)
+
 This file contains 10 sheets, the first being a coded summary of each subsequent
 sheet, which are labeled A-I.
 
@@ -65,6 +99,8 @@ eliminating the prefix "97". For example, isolates named 2A, 5B, 4D are actually
 
 
 ### Sheet A
+
+> Corresponding clean data: [A_DLB_SoyBean_Dassel.csv](clean_data/A_DLB_SoyBean_Dassel.csv)
 
 Detached Leaf Bioassay: 70 isolates vs Dassel on soybean.
 
@@ -91,6 +127,8 @@ discriminatory dose used.
 
 ### Sheet B
 
+> Corresponding clean data: [B_ST_DryBean_G122.csv](clean_data/B_ST_DryBean_G122.csv)
+
 Straw test of 32 isolates on dry bean cultivar G122
 
  - 384 Rows
@@ -116,6 +154,8 @@ day after inoculation.
 
 Detached Leaf Bioassay: 29 isolates vs IAC-Alvorada
 
+> Corresponding clean data: [C_DLB_DryBean_IAC-Alvorada.csv](clean_data/C_DLB_DryBean_IAC-Alvorada.csv)
+
  - 870 Rows
  - 11 Columns
  - 29 isolates
@@ -138,6 +178,8 @@ Detached Leaf Bioassay: 29 isolates vs IAC-Alvorada
 
 Straw test: 28 isolates vs. IAC-Alvorada Brazil
 
+> Corresponding clean data: [D_ST_DryBean_IAC-Alvorada.csv](clean_data/D_ST_DryBean_IAC-Alvorada.csv)
+
  - 308 Rows
  - 4 Columns
  - 28 isolates
@@ -153,6 +195,8 @@ Straw test: 28 isolates vs. IAC-Alvorada Brazil
 ### Sheet E
 
 Detached Leaf Bioassay: Soybean cultivars
+
+> Corresponding clean data: [E_DLB_Soybean_Cultivars.csv](clean_data/E_DLB_Soybean_Cultivars.csv)
 
  - 220 Rows
  - 5 columns
@@ -171,6 +215,8 @@ Detached Leaf Bioassay: Soybean cultivars
 ### Sheet F
 
 Detached Leaf Bioassay: First experimental replicate for dry bean cultivars
+
+> Corresponding clean data: [F_DLB_DryBean_Cultivars-1.csv](clean_data/F_DLB_DryBean_Cultivars-1.csv)
 
 This experiment was to determine which isolate was to be used for the DLB 972B
 or 972D. These were evaluated at different time points:
@@ -205,6 +251,8 @@ Isolate 2D: up to 66 hpi
 
 Detached Leaf Bioassay: Second experimental replicate for dry bean cultivars with isolate 972B
 
+> Corresponding clean data: [G_DLB_DryBean_Cultivars-2.csv](clean_data/G_DLB_DryBean_Cultivars-2.csv)
+
  - 276 Rows
  - 9 Columns
  - 23 cultivars
@@ -227,6 +275,8 @@ Detached Leaf Bioassay: Second experimental replicate for dry bean cultivars wit
 
 Straw Test: First experimental replicate for dry bean cultivars
 
+> Corresponding clean data: [H_ST_DryBean_Cultivars-1.csv](clean_data/H_ST_DryBean_Cultivars-1.csv)
+
 This experiment was to determine which isolate was to be used for the Straw
 Test: 972B or 972D.
 
@@ -248,6 +298,8 @@ Test: 972B or 972D.
 ### Sheet I
 
 Straw Test: Second experimental replicate for dry bean cultivars with isolate 2D
+
+> Corresponding clean data: [I_ST_DryBean_Cultivars-2.csv](clean_data/I_ST_DryBean_Cultivars-2.csv)
 
  - 285 Rows
  - 4 columns
