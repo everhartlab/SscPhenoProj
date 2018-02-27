@@ -212,22 +212,26 @@ dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
 st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
 
 sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
+  theme(axis.text = element_text(color = "black")) +
   theme(axis.title.x = element_blank()) +
-  theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black"))
+  theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black")) +
+  theme(panel.border = element_rect(size = 1))
   
 p2 <- dlb %>%
-  ggplot(mapping=aes(x=proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
-  stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
-  labs(y = "Detached leaf bioassay") +
+  ggplot(mapping=aes(x = proj, y = mean)) +
+  geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
+              fill = "white", size = 3.5, alpha = 2.5/4, stroke = 1) +
+  stat_summary(fun.y = mean, geom = "point", shape = 95, size = 17, color = "black") + 
+  labs(y = expression(paste("Detached leaf bioassay ", (cm^2) ))) +
   sydney_theme
   
 p2
 p3 <- st %>%
   ggplot(mapping = aes(x = proj, y = mean)) +
-  geom_jitter(width = .1, height = 0, shape=21, color="black", fill="orange", size=3.5, alpha=3/4) +
-  stat_summary(fun.y=mean, geom="point", shape=95, size=12, color="black") + 
-  scale_y_continuous(position = "right") +
+  geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
+              fill = "white", size = 3.5, alpha = 2.5/4, stroke = 1) +
+  stat_summary(fun.y = mean, geom = "point", shape = 95, size = 17, color = "black") + 
+  scale_y_continuous(position = "right", limits = c(1, 9), breaks = c(1, 3, 5, 7, 9)) +
   labs(y = "Straw test rating") +
   sydney_theme
 
@@ -235,8 +239,8 @@ aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h",
                                       rel_widths = c(2.75, 1),
                                       label_size = 16, 
                                       label_fontfamily = "Helvetica", 
-                                      label_x = c(0.13, 0.045),
-                                      label_y = c(0.975, 0.975))
+                                      label_x = c(A = 0.135, B = 0.045),
+                                      label_y = c(A = 0.975, B = 0.975))
 aggressive_plot
 cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
                 plot = aggressive_plot,
