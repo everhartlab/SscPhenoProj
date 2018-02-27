@@ -216,7 +216,8 @@ sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
   theme(axis.title.x = element_blank()) +
   theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black")) +
   theme(panel.border = element_rect(size = 1))
-  
+
+set.seed(2018-02-27)
 p2 <- dlb %>%
   ggplot(mapping=aes(x = proj, y = mean)) +
   geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
@@ -239,7 +240,7 @@ aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h",
                                       rel_widths = c(2.75, 1),
                                       label_size = 16, 
                                       label_fontfamily = "Helvetica", 
-                                      label_x = c(A = 0.135, B = 0.045),
+                                      label_x = c(A = 0.1650, B = 0.075),
                                       label_y = c(A = 0.975, B = 0.975))
 aggressive_plot
 cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
