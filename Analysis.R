@@ -318,10 +318,21 @@ Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni
 
 Dassel_model2 <- lmer(Area ~ Isolate + Collection + (1 | Section), data = aproj)
 anova(Dassel_model2)
-
-# Indeed it is significant
-
 Dassel_LSD2 <- myLSD(aproj$Area, aproj$Isolate, Dassel_model2, p.adj = "bonferroni")
+
+# Indeed it is significant, so we will now analyze each collection time
+# separately.
+
+aproj %>%
+  group_by(Collection) %>%
+  summarize(model = list(broom::tidy(anova(lmer(Area ~ Isolate + (1 | Section)))))) %>%
+  unnest()
+
+# Everything is significant while separating these out, so we can conclude that,
+# while the experiments differed, they only differed in magnitude, but not 
+# pattern. We can see the magnitude of how the experiments changed by looking 
+# at the collection response, specifically.
+
 myLSD(aproj$Area, aproj$Collection, Dassel_model2, p.adj = "bonferroni")
 
 asum %>% 
@@ -340,20 +351,32 @@ IAC_LSD <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model, p.adj = "bonferroni
 # will set that as a fixed effect and test it here. 
 IAC_model2 <- lmer(`48 horas` ~ Isolate + Collection + (1 | Block), data = cproj)
 anova(IAC_model2)
-#
-# Based on the results here, we can conclude that leaf age does not have a 
-# significant effect on lesion area for IAC-Alvorada.
+IAC_LSD2 <- myLSD(cproj$`48 horas`, cproj$Isolate, IAC_model2, p.adj = "bonferroni")
 
+# Again, the collection time appears to be slightly significant, so we can check
+# to see if this affected the outcome by separating the collections
+
+cproj %>%
+  group_by(Collection) %>%
+  summarize(model = list(broom::tidy(anova(lmer(`48 horas` ~ Isolate + (1 | Block)))))) %>%
+  unnest()
+
+# Okay, we can see that everything still appears significant after considering
+# collection separately. 
+IAC_LSD2 <- myLSD(cproj$`48 horas`, cproj$Collection, IAC_model2, p.adj = "bonferroni")
+
+# It appears that the third collection time is different in magnitude from the 
+# first two, but only at p = 0.003
 csum %>%
   group_by(Collection) %>%
   summarize(mean = mean(mean, na.rm = TRUE))
 
-# ## Straw Test: Isolates
+# Straw Test: Isolates
 # 
 # Straw tests are not performed on varying tissue age, so we need only compare
 # by isolate here. We are treating each replicate as a random effect 
-
-
+#
+#
 # G133 by Isolate ---------------------------------------------------------
 G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
 anova(G133_model)
@@ -376,6 +399,7 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 
 
 # Cultivar tests ----------------------------------------------------------
+# =========================================================================
 # 
 # Here we have three experiments that have to do with assessing if there is a
 # difference in resistance between cultivars. 
@@ -402,7 +426,7 @@ soy_LSD <- myLSD(eproj$Area, eproj$Name, soy_model, p.adj = "bonferroni")
 # replicate
 ggplot(eproj, aes(x = Name, y = Area, fill = Exp_rep)) +
   geom_boxplot() +
-  theme(axis.text.x = element_text(hjust = 1, vjust = 0.5, angle = 90))
+  sydney_theme
 # The question then becomes, is it significant if we include it as a fixed
 # effect in our model?
 soy_model2 <- lmer(Area ~ Name + Exp_rep + (1 | Rep), data = eproj)
@@ -410,13 +434,14 @@ anova(soy_model2)
 # Yes, it is significant
 soy_LSD2 <- myLSD(eproj$Area, eproj$Exp_rep, soy_model2, p.adj = "bonferroni")
 
-# Out of curiosity, what do the different experiments look like if we analye 
-# them separately with a milquetoast AMOVA?
+# What do the different experiments look like if we analyze them separately?
 eproj %>% 
   group_by(Exp_rep) %>%
-  summarize(model = list(aov(Area ~ Name) %>% anova() %>% broom::tidy())) %>%
+  summarize(model = list(lmer(Area ~ Name + (1 | Rep)) %>% anova() %>% broom::tidy())) %>%
   unnest()
-# We get largely the same answer, which puts our minds at ease ^_^
+# This is interesting. If we analyze these separately, then the results are not
+# significant at p < 0.0001 or even p < 0.01. However, this could be due to 
+# overdispersion of the data. 
 
 # Dry Bean Cultivar Detached Leaf Bioassay --------------------------------
 # 
@@ -440,15 +465,24 @@ cultivar_DLB_LSD <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Cultivar, cultivar_DL
 
 # And we can visualize the effect of experiment
 ggplot(cultivar_DLB, aes(x = Cultivar, y = AUMPC, fill = Experiment)) + 
-  geom_boxplot()
+  geom_boxplot() +
+  sydney_theme
 # We can see that there's not as strong of an effect due to experiment, and we 
 # can tickle our fancy by including this in our fixed effects
 cultivar_DLB_model2 <- lmer(AUMPC ~ Cultivar + Experiment + (1 | Block), data = cultivar_DLB)
 anova(cultivar_DLB_model2)
 cultivar_DLB_LSD2 <- myLSD(cultivar_DLB$AUMPC, cultivar_DLB$Experiment, cultivar_DLB_model, p.adj = "bonferroni")
-# The effect is moderately significant
+# The effect is significant, so we will proceed to split the Experiments and
+# analyze them separately
 
-
+cultivar_DLB %>%
+  group_by(Experiment) %>%
+  summarize(model = list(lmer(AUMPC ~ Cultivar + (1 | Block)) %>% anova() %>% broom::tidy())) %>%
+  unnest()
+# This is quite revealing, but it shows what we see in the data visualization:
+# the results are inconsistent between experiments, especially for IAC Diplomata,
+# and IAC Una.
+# 
 # Dry Bean Cultivar Straw Test --------------------------------------------
 #
 # Similar to the Detached Leaf Bioassay, the straw tests were done in two
@@ -477,7 +511,8 @@ cultivar_ST_LSD <- myLSD(cultivar_ST$Score, cultivar_ST$Cultivar, cultivar_ST_mo
 # The visualization
 ggplot(cultivar_ST, aes(x = Cultivar, y = Score, fill = Experiment)) + 
   geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  sydney_theme +
+  scale_y_continuous(limits = c(1, 9), breaks = c(1, 3, 5, 7, 9))
 
 # There doesn't appear to be any significant effect of Experiment.
 cultivar_ST_model2 <- lmer(Score ~ Cultivar + Experiment + (1 | Rep), data = cultivar_ST) 
