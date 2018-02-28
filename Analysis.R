@@ -416,10 +416,10 @@ csum %>%
 # by isolate here. We are treating each replicate as a random effect 
 #
 #
-# G133 by Isolate ---------------------------------------------------------
-G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
-anova(G133_model)
-G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
+# G122 by Isolate ---------------------------------------------------------
+G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+anova(G122_model)
+G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
 # Isolate is significant
 
 # IAC-Alvorada by Isolate: Straw Test -------------------------------------

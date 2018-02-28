@@ -602,16 +602,16 @@ Warning messages:
 > # by isolate here. We are treating each replicate as a random effect 
 > #
 > #
-> # G133 by Isolate ---------------------------------------------------------
-> G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
-> anova(G133_model)
+> # G122 by Isolate ---------------------------------------------------------
+> G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+> anova(G122_model)
 Analysis of Variance Table of type III  with  Satterthwaite 
 approximation for degrees of freedom
         Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
 Isolate 403.12  13.004    31 339.12  4.8854 3.797e-14 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-> G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
+> G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
 > # Isolate is significant
 > 
 > # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -857,7 +857,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  language (EN)                        
  collate  en_US.UTF-8                 
  tz       America/Chicago             
- date     2018-02-27                  
+ date     2018-02-28                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version  date       source        
