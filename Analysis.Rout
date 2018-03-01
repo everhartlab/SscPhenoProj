@@ -687,6 +687,106 @@ In dir.create(here("tables")) :
 +   mutate(`Top 10` = paste(`Top 10`$Isolate, collapse = ", ")) %>%
 +   readr::write_csv(here("tables/isolate_summary.csv"))
 > 
+> # Because this isolate table may be difficult to parse, A better solution would
+> # be to arrange these isolates by the number of times an isolate is in the top 
+> # 10 of any experiment and is assessed over at least three of the four 
+> # experiments. 
+> isolate_data_arranged <- isolate_data %>%
++   ungroup() %>%
++   filter(is.finite(mean)) %>%
++   unite(col = EC, Experiment, Collection, remove = FALSE) %>%
++   group_by(EC) %>%
++   mutate(rank = rank(mean, ties.method = "last", na.last = TRUE)) %>%
++   arrange(-rank) %>%
++   mutate(rank = seq(n())) %>%
++   ungroup() %>%
++   arrange(grepl("Straw", EC)) %>%
++   mutate(EC = fct_inorder(EC)) %>%
++   group_by(Isolate) %>%
++   mutate(top = case_when(rank < 11 ~ TRUE, TRUE ~ FALSE)) %>%
++   mutate(sumtop = sum(top)) %>%
++   mutate(perctop = sumtop/n()) %>%
++   mutate(sum = sum(mean, na.rm = TRUE)) %>%
++   filter(length(unique(Experiment)) >= 3) %>%
++   ungroup() %>%
++   filter(sumtop > 0) %>%
++   arrange(-sumtop) %>%
++   mutate(Isolate = fct_inorder(Isolate)) 
+> isolate_data_arranged
+# A tibble: 90 x 15
+   EC        Experiment  Isolate Collection     n  mean   min   max    sd    se
+   <fct>     <chr>       <fct>   <chr>      <int> <dbl> <dbl> <dbl> <dbl> <dbl>
+ 1 Dassel D… Dassel DLB  976B    third         10 14.1  10.6  18.5  2.22  0.703
+ 2 Dassel D… Dassel DLB  976B    second        10 13.0   9.74 19.0  2.68  0.847
+ 3 Dassel D… Dassel DLB  976B    first         10 13.5  10.2  18.4  2.67  0.843
+ 4 IAC-Alvo… IAC-Alvora… 976B    third         10 21.3  14.7  26.2  3.55  1.12 
+ 5 IAC-Alvo… IAC-Alvora… 976B    second        10 15.3  11.0  18.9  2.57  0.813
+ 6 IAC-Alvo… IAC-Alvora… 976B    first         10 13.5   8.12 21.0  3.72  1.18 
+ 7 G122 Str… G122 Straw… 976B    <NA>          12  5.42  4.00  6.00 0.669 0.193
+ 8 IAC-Alvo… IAC-Alvora… 976B    <NA>          11  8.55  7.00  9.00 0.820 0.247
+ 9 Dassel D… Dassel DLB  974C    second        10 15.9  12.3  23.3  3.55  1.12 
+10 Dassel D… Dassel DLB  974C    first         10 15.5  11.6  21.7  3.22  1.02 
+# ... with 80 more rows, and 5 more variables: rank <int>, top <lgl>, sumtop
+#   <int>, perctop <dbl>, sum <dbl>
+> 
+> # Here, I'm creating a summary table that summarizes what the data shows. This
+> # will arrange the isolates by the number of times they were found in the top 10
+> # of any experiment, give the percentage out of the number of total experiments
+> # (including collections), the number of experiments conducted, and those
+> # experiments that they were found to be in the top 10.
+> isolate_data_arranged %>%
++   group_by(Isolate) %>%
++   summarize(`In the Top 10` = unique(sumtop), 
++             `%` = unique(perctop),
++             `N Experiments` = length(unique(Experiment)),
++             Experiments = paste(EC[top], collapse = ", ")) %>%
++   mutate(Experiments = gsub("_", " ", Experiments)) %>%
++   mutate(Experiments = gsub(" NA", "", Experiments)) %>%
++   readr::write_csv("tables/isolates_in_top_ten.csv") %>%
++   print()
+# A tibble: 13 x 5
+   Isolate `In the Top 10`   `%` `N Experiments` Experiments                   
+   <fct>             <int> <dbl>           <int> <chr>                         
+ 1 976B                  5 0.625               4 Dassel DLB third, Dassel DLB …
+ 2 974C                  4 0.571               3 Dassel DLB second, Dassel DLB…
+ 3 973D                  3 0.375               4 Dassel DLB third, IAC-Alvorad…
+ 4 975C                  3 0.375               4 IAC-Alvorada DLB first, IAC-A…
+ 5 975E                  3 0.375               4 IAC-Alvorada DLB third, G122 …
+ 6 977C                  3 0.429               3 IAC-Alvorada DLB first, IAC-A…
+ 7 977B                  2 0.250               4 Dassel DLB third, IAC-Alvorad…
+ 8 977A                  2 0.286               3 IAC-Alvorada DLB second, IAC-…
+ 9 978A                  2 0.286               3 IAC-Alvorada DLB first, IAC-A…
+10 975D                  2 0.400               3 IAC-Alvorada DLB third, IAC-A…
+11 973C                  2 0.400               3 G122 Straw Test, IAC-Alvorada…
+12 977E                  1 0.143               3 IAC-Alvorada DLB third        
+13 976C                  1 0.200               3 IAC-Alvorada DLB first        
+> 
+> # This barplot summarizes the above table by using transparency to denote the
+> # top 10. 
+> pal <- c(
++   "Dassel DLB_first" = "#B2E0D2",
++   "Dassel DLB_second" = "#8CD1BB",
++   "Dassel DLB_third" = "#66C2A5",
++   "IAC-Alvorada DLB_first" = "#FDC6B0",
++   "IAC-Alvorada DLB_second" = "#FCA989",
++   "IAC-Alvorada DLB_third" = "#FC8D62",
++   "G122 Straw Test_NA" = "#8DA0CB",
++   "IAC-Alvorada Straw Test_NA" = "#E78AC3"
++ )
+> 
+> ggplot(isolate_data_arranged, aes(x = Isolate, y = mean, fill = EC, alpha = top)) +
++   geom_col() +
++   scale_fill_manual(values = pal) +
++   scale_alpha_discrete(range = c(0.3, 1)) +
++   labs(list(
++     fill = "Experiment/Collection",
++     alpha = "In the top 10"
++   )) +
++   sydney_theme +
++   ggtitle("Isolates ranked in the top 10 across at least three experiments") +
++   theme(axis.title.x = element_text(color = "black"))
+> 
+> 
 > # Cultivar tests ----------------------------------------------------------
 > # =========================================================================
 > # 

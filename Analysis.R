@@ -480,6 +480,75 @@ isolate_summary_print <- isolate_summary %>%
   mutate(`Top 10` = paste(`Top 10`$Isolate, collapse = ", ")) %>%
   readr::write_csv(here("tables/isolate_summary.csv"))
 
+# Because this isolate table may be difficult to parse, A better solution would
+# be to arrange these isolates by the number of times an isolate is in the top 
+# 10 of any experiment and is assessed over at least three of the four 
+# experiments. 
+isolate_data_arranged <- isolate_data %>%
+  ungroup() %>%
+  filter(is.finite(mean)) %>%
+  unite(col = EC, Experiment, Collection, remove = FALSE) %>%
+  group_by(EC) %>%
+  mutate(rank = rank(mean, ties.method = "last", na.last = TRUE)) %>%
+  arrange(-rank) %>%
+  mutate(rank = seq(n())) %>%
+  ungroup() %>%
+  arrange(grepl("Straw", EC)) %>%
+  mutate(EC = fct_inorder(EC)) %>%
+  group_by(Isolate) %>%
+  mutate(top = case_when(rank < 11 ~ TRUE, TRUE ~ FALSE)) %>%
+  mutate(sumtop = sum(top)) %>%
+  mutate(perctop = sumtop/n()) %>%
+  mutate(sum = sum(mean, na.rm = TRUE)) %>%
+  filter(length(unique(Experiment)) >= 3) %>%
+  ungroup() %>%
+  filter(sumtop > 0) %>%
+  arrange(-sumtop) %>%
+  mutate(Isolate = fct_inorder(Isolate)) 
+isolate_data_arranged
+
+# Here, I'm creating a summary table that summarizes what the data shows. This
+# will arrange the isolates by the number of times they were found in the top 10
+# of any experiment, give the percentage out of the number of total experiments
+# (including collections), the number of experiments conducted, and those
+# experiments that they were found to be in the top 10.
+isolate_data_arranged %>%
+  group_by(Isolate) %>%
+  summarize(`In the Top 10` = unique(sumtop), 
+            `%` = unique(perctop),
+            `N Experiments` = length(unique(Experiment)),
+            Experiments = paste(EC[top], collapse = ", ")) %>%
+  mutate(Experiments = gsub("_", " ", Experiments)) %>%
+  mutate(Experiments = gsub(" NA", "", Experiments)) %>%
+  readr::write_csv("tables/isolates_in_top_ten.csv") %>%
+  print()
+
+# This barplot summarizes the above table by using transparency to denote the
+# top 10. 
+pal <- c(
+  "Dassel DLB_first" = "#B2E0D2",
+  "Dassel DLB_second" = "#8CD1BB",
+  "Dassel DLB_third" = "#66C2A5",
+  "IAC-Alvorada DLB_first" = "#FDC6B0",
+  "IAC-Alvorada DLB_second" = "#FCA989",
+  "IAC-Alvorada DLB_third" = "#FC8D62",
+  "G122 Straw Test_NA" = "#8DA0CB",
+  "IAC-Alvorada Straw Test_NA" = "#E78AC3"
+)
+
+ggplot(isolate_data_arranged, aes(x = Isolate, y = mean, fill = EC, alpha = top)) +
+  geom_col() +
+  scale_fill_manual(values = pal) +
+  scale_alpha_discrete(range = c(0.3, 1)) +
+  labs(list(
+    fill = "Experiment/Collection",
+    alpha = "In the top 10"
+  )) +
+  sydney_theme +
+  ggtitle("Isolates ranked in the top 10 across at least three experiments") +
+  theme(axis.title.x = element_text(color = "black"))
+
+
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================
 # 
