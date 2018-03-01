@@ -2,15 +2,16 @@
 
 This project contains the data and code used for analysis in:
 
-> Miorini TJJ, Higgins R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (201X)
-> Variation in pathogen aggression and cultivar performance against
-> _Sclerotinia sclerotiorum_ _In Preparation_
+> Miorini TJJ, Higgens R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (201X) 
+> Variation in pathogen aggression and cultivar performance against *Sclerotinia 
+> sclerotiorum* in soybean and dry bean from the U.S. and Brazil. _In Preparation_
 
 If you use any of the scripts or data, please cite the project on the Open Science Framework:
 
-> Miorini TJJ, Higgins R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (2018).
-> Data and analysis for variation in pathogen aggression and cultivar performance
-> against _Sclerotinia sclerotiorum_. Retrieved from osf.io/2x7fc
+> Miorini TJJ, Higgens R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (2018) 
+> Data and analysis for Variation in pathogen aggression and cultivar performance 
+> against *Sclerotinia sclerotiorum* in soybean and dry bean from the U.S. and Brazil. 
+> doi: [10.17605/OSF.IO/2X7FC](https://doi.org/10.17605/OSF.IO/2X7FC).
 
 # Analysis
 
