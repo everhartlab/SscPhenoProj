@@ -157,7 +157,14 @@ In dir.create(here("figures")) :
 7 G       Second exp_re_DLB_dry bean cultivars_2B             
 8 H       First exp_rep_strawtest_dry bean cultivars_2B and 2D
 9 I       Second exp_rep_ strawtest_dry bean cultivars_2D     
-> 
+> #
+> # Because all the 97X isolates have the 97 part removed, I'm creating a little
+> # function to add it in so that the data can be combined later on. 
+> fix_isolate_name <- . %>%
++   mutate(Isolate = case_when(
++     grepl("^[0-9][A-Z]$", Isolate) ~ paste0("97", Isolate), 
++     TRUE                           ~ Isolate
++     ))
 > # Evaluation of isolates --------------------------------------------------
 > # 
 > # A       70 isolates vs Dassel - soybean       ## Partially resistant
@@ -168,27 +175,60 @@ In dir.create(here("figures")) :
 > aproj <- read_excel(data_path, sheet = "A", na = excel_nas, 
 +                     col_types = c("text", "text", "text", "text", "text", "numeric")) %>%
 +   dplyr::mutate_if(is.numeric, round, 3) %>%
++   fix_isolate_name %>%
 +   readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
 > 
+> # The G122 project is contained in two different sheets that need to be joined
+> # together. The first step is to read in the csv data. The first column will
+> # be renamed to X1 automatically. The first colum is the full isolate names.
+> # This is necessary to confirm that Block is in the correct order.
+> bproj_raw <- read_csv(here("Mensure and score in different days_straw test.csv"),
++                       col_types = cols(
++                         X1      = col_character(),
++                         Block   = col_character(),
++                         `3 dai` = col_double(),
++                         `6 dai` = col_double(),
++                         `8 dai` = col_double(),
++                         AUDPC   = col_double(),
++                         `After first node` = col_double()
++                       ), 
++                       na = excel_nas)
+Warning message:
+Missing column names filled in: 'X1' [1] 
+> # The next step is to read in the excel sheet B and filter it. 
 > bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385",
 +                     col_types = c("text", "text", "numeric", "numeric", 
 +                                   "numeric", "numeric")) %>%
++   fix_isolate_name %>%
 +   dplyr::mutate_if(is.numeric, round, 3) %>%
 +   dplyr::group_by(Isolate) %>%
-+   dplyr::mutate(Rep = seq(n())) %>%
++   dplyr::mutate(Block = as.character(seq(n()))) %>%
 +   dplyr::ungroup() %>%
++   dplyr::inner_join(bproj_raw, 
++                     by = c("Isolate"    = "X1", 
++                            "8 dai (cm)" = "8 dai", 
++                            "AUDPC", 
++                            "After first node",
++                            "Block")) %>%
++   dplyr::select(Isolate_number, Isolate, Block, 
++                 `3 dai`, `6 dai`, `8 dai (cm)`, 
++                 everything()) %>%
 +   readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
+> 
+> stopifnot(nrow(bproj) == nrow(bproj_raw))
 > 
 > cproj <- read_excel(data_path, sheet = "C", na = excel_nas,
 +                     col_types = c("text", "text", "text", "text", "text", 
 +                                   "numeric", "numeric", "numeric", "numeric", 
 +                                   "numeric", "numeric")) %>%
 +   dplyr::mutate_if(is.numeric, round, 3) %>%
++   fix_isolate_name %>%
 +   readr::write_csv(path = here("clean_data", "C_DLB_DryBean_IAC-Alvorada.csv"))
 > 
 > dproj <- read_excel(data_path, sheet = "D", na = excel_nas, 
 +                     col_types = c("text", "text", "numeric", "numeric")) %>%
 +   dplyr::mutate_if(is.numeric, round, 3) %>%
++   fix_isolate_name %>%
 +   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 > 
 > 
@@ -300,7 +340,8 @@ In dir.create(here("figures")) :
 +   theme(axis.title.x = element_blank()) +
 +   theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black")) +
 +   theme(panel.border = element_rect(size = 1))
->   
+> 
+> set.seed(2018-02-27)
 > p2 <- dlb %>%
 +   ggplot(mapping=aes(x = proj, y = mean)) +
 +   geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
@@ -326,7 +367,7 @@ Warning messages:
 +                                       rel_widths = c(2.75, 1),
 +                                       label_size = 16, 
 +                                       label_fontfamily = "Helvetica", 
-+                                       label_x = c(A = 0.135, B = 0.045),
++                                       label_x = c(A = 0.1650, B = 0.075),
 +                                       label_y = c(A = 0.975, B = 0.975))
 Warning messages:
 1: Removed 3 rows containing non-finite values (stat_summary). 
@@ -401,8 +442,8 @@ Warning messages:
 > anova(Dassel_model)
 Analysis of Variance Table of type III  with  Satterthwaite 
 approximation for degrees of freedom
-        Sum Sq Mean Sq NumDF DenDF F.value   Pr(>F)    
-Isolate  10566  165.09    64 47.89  10.884 9.77e-15 ***
+        Sum Sq Mean Sq NumDF  DenDF F.value   Pr(>F)    
+Isolate  10566  165.09    64 47.882  10.884 9.77e-15 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > Dassel_LSD <- myLSD(aproj$Area, aproj$Isolate, Dassel_model, p.adj = "bonferroni")
@@ -417,7 +458,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Analysis of Variance Table of type III  with  Satterthwaite 
 approximation for degrees of freedom
             Sum Sq Mean Sq NumDF   DenDF F.value    Pr(>F)    
-Isolate    10565.7   165.1    64   47.89  10.884  9.77e-15 ***
+Isolate    10565.7   165.1    64   47.89  10.884 9.659e-15 ***
 Collection  6433.1  3216.5     2 2031.04 212.069 < 2.2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
@@ -435,7 +476,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
   <chr>      <chr>   <dbl>  <dbl> <int> <dbl>     <dbl>       <dbl>
 1 first      Isolate  5129   80.1    64   0        7.34 NaN        
 2 second     Isolate  6367   99.5    64 123       10.3    0        
-3 third      Isolate  7270  114      64  12.2     10.4    0.0000393
+3 third      Isolate  7270  114      64  12.2     10.4    0.0000385
 Warning messages:
 1: In pf(F.stat, qr(Lc)$rank, nu.F) : NaNs produced
 2: In tidy.anova(anova(lmer(Area ~ Isolate + (1 | Section)))) :
@@ -561,16 +602,16 @@ Warning messages:
 > # by isolate here. We are treating each replicate as a random effect 
 > #
 > #
-> # G133 by Isolate ---------------------------------------------------------
-> G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
-> anova(G133_model)
+> # G122 by Isolate ---------------------------------------------------------
+> G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+> anova(G122_model)
 Analysis of Variance Table of type III  with  Satterthwaite 
 approximation for degrees of freedom
         Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
 Isolate 403.12  13.004    31 339.12  4.8854 3.797e-14 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-> G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
+> G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
 > # Isolate is significant
 > 
 > # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -584,9 +625,9 @@ Isolate  341.1  12.633    27   280  11.458 < 2.2e-16 ***
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 > ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model, p.adj = "bonferroni")
 > # Isolate is significant, however, this is largely driven by one 
-> # under-performing isolate (2D).
+> # under-performing isolate (972D).
 > 
-> dproj2 <- filter(dproj, Isolate != "2D")
+> dproj2 <- filter(dproj, Isolate != "972D")
 > IAC_ST_model2 <- lmer(Score ~ Isolate + (1 | Rep), data = dproj2)
 > anova(IAC_ST_model2)
 Analysis of Variance Table of type III  with  Satterthwaite 
@@ -848,7 +889,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  language (EN)                        
  collate  en_US.UTF-8                 
  tz       America/Chicago             
- date     2018-02-27                  
+ date     2018-02-28                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version  date       source        

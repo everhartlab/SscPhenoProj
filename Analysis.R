@@ -73,7 +73,14 @@ data_path   <- here("Brazilian agressiveness_raw_data-final2.xlsx")
 ssc_summary <- read_excel(data_path, sheet = "Summary", na = excel_nas, col_names = FALSE)
 colnames(ssc_summary) <- c("sheetid", "projdesc")
 ssc_summary
-
+#
+# Because all the 97X isolates have the 97 part removed, I'm creating a little
+# function to add it in so that the data can be combined later on. 
+fix_isolate_name <- . %>%
+  mutate(Isolate = case_when(
+    grepl("^[0-9][A-Z]$", Isolate) ~ paste0("97", Isolate), 
+    TRUE                           ~ Isolate
+    ))
 # Evaluation of isolates --------------------------------------------------
 # 
 # A       70 isolates vs Dassel - soybean       ## Partially resistant
@@ -84,27 +91,58 @@ ssc_summary
 aproj <- read_excel(data_path, sheet = "A", na = excel_nas, 
                     col_types = c("text", "text", "text", "text", "text", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
+  fix_isolate_name %>%
   readr::write_csv(path = here("clean_data", "A_DLB_SoyBean_Dassel.csv"))
 
+# The G122 project is contained in two different sheets that need to be joined
+# together. The first step is to read in the csv data. The first column will
+# be renamed to X1 automatically. The first colum is the full isolate names.
+# This is necessary to confirm that Block is in the correct order.
+bproj_raw <- read_csv(here("Mensure and score in different days_straw test.csv"),
+                      col_types = cols(
+                        X1      = col_character(),
+                        Block   = col_character(),
+                        `3 dai` = col_double(),
+                        `6 dai` = col_double(),
+                        `8 dai` = col_double(),
+                        AUDPC   = col_double(),
+                        `After first node` = col_double()
+                      ), 
+                      na = excel_nas)
+# The next step is to read in the excel sheet B and filter it. 
 bproj <- read_excel(data_path, sheet = "B",na = excel_nas, range = "A1:F385",
                     col_types = c("text", "text", "numeric", "numeric", 
                                   "numeric", "numeric")) %>%
+  fix_isolate_name %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
   dplyr::group_by(Isolate) %>%
-  dplyr::mutate(Rep = seq(n())) %>%
+  dplyr::mutate(Block = as.character(seq(n()))) %>%
   dplyr::ungroup() %>%
+  dplyr::inner_join(bproj_raw, 
+                    by = c("Isolate"    = "X1", 
+                           "8 dai (cm)" = "8 dai", 
+                           "AUDPC", 
+                           "After first node",
+                           "Block")) %>%
+  dplyr::select(Isolate_number, Isolate, Block, 
+                `3 dai`, `6 dai`, `8 dai (cm)`, 
+                everything()) %>%
   readr::write_csv(path = here("clean_data", "B_ST_DryBean_G122.csv"))
+
+stopifnot(nrow(bproj) == nrow(bproj_raw))
 
 cproj <- read_excel(data_path, sheet = "C", na = excel_nas,
                     col_types = c("text", "text", "text", "text", "text", 
                                   "numeric", "numeric", "numeric", "numeric", 
                                   "numeric", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
+  fix_isolate_name %>%
   readr::write_csv(path = here("clean_data", "C_DLB_DryBean_IAC-Alvorada.csv"))
 
 dproj <- read_excel(data_path, sheet = "D", na = excel_nas, 
                     col_types = c("text", "text", "numeric", "numeric")) %>%
   dplyr::mutate_if(is.numeric, round, 3) %>%
+  fix_isolate_name %>%
   readr::write_csv(path = here("clean_data", "D_ST_DryBean_IAC-Alvorada.csv"))
 
 
@@ -216,7 +254,8 @@ sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
   theme(axis.title.x = element_blank()) +
   theme(axis.text.x = element_text(hjust = 1, vjust = 1, angle = 45, color = "black")) +
   theme(panel.border = element_rect(size = 1))
-  
+
+set.seed(2018-02-27)
 p2 <- dlb %>%
   ggplot(mapping=aes(x = proj, y = mean)) +
   geom_jitter(width = .1, height = 0, shape = 21, color = "black", 
@@ -239,7 +278,7 @@ aggressive_plot <- cowplot::plot_grid(p2, p3, labels = "AUTO", align = "h",
                                       rel_widths = c(2.75, 1),
                                       label_size = 16, 
                                       label_fontfamily = "Helvetica", 
-                                      label_x = c(A = 0.135, B = 0.045),
+                                      label_x = c(A = 0.1650, B = 0.075),
                                       label_y = c(A = 0.975, B = 0.975))
 aggressive_plot
 cowplot::ggsave(filename = here("figures", "DAB-ST-stripplot.pdf"), 
@@ -377,10 +416,10 @@ csum %>%
 # by isolate here. We are treating each replicate as a random effect 
 #
 #
-# G133 by Isolate ---------------------------------------------------------
-G133_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Rep), data = bproj)
-anova(G133_model)
-G133_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G133_model, p.adj = "bonferroni")
+# G122 by Isolate ---------------------------------------------------------
+G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+anova(G122_model)
+G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
 # Isolate is significant
 
 # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -388,9 +427,9 @@ IAC_ST_model <- lmer(Score ~ Isolate + (1 | Rep), data = dproj)
 anova(IAC_ST_model)
 ISC_ST_LSD <- myLSD(dproj$Score, dproj$Isolate, IAC_ST_model, p.adj = "bonferroni")
 # Isolate is significant, however, this is largely driven by one 
-# under-performing isolate (2D).
+# under-performing isolate (972D).
 
-dproj2 <- filter(dproj, Isolate != "2D")
+dproj2 <- filter(dproj, Isolate != "972D")
 IAC_ST_model2 <- lmer(Score ~ Isolate + (1 | Rep), data = dproj2)
 anova(IAC_ST_model2)
 ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonferroni")
