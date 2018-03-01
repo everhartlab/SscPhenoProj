@@ -207,11 +207,11 @@ bsum <- bproj %>%
   group_by(Isolate) %>%
   summarise(
     n = n(),
-    mean = mean(`8 dai (cm)`, na.rm = TRUE),
-    min = min(`8 dai (cm)`, na.rm = TRUE),
-    max = max(`8 dai (cm)`, na.rm = TRUE),
-    sd = sd(`8 dai (cm)`, na.rm = TRUE),
-    se = plotrix::std.error(`8 dai (cm)`, na.rm = TRUE)
+    mean = mean(Score, na.rm = TRUE),
+    min = min(Score, na.rm = TRUE),
+    max = max(Score, na.rm = TRUE),
+    sd = sd(Score, na.rm = TRUE),
+    se = plotrix::std.error(Score, na.rm = TRUE)
   )
 csum <- cproj %>%
   group_by(Isolate, Collection) %>%
@@ -417,9 +417,9 @@ csum %>%
 #
 #
 # G122 by Isolate ---------------------------------------------------------
-G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+G122_model <- lmer(Score ~ Isolate + (1 | Block), data = bproj)
 anova(G122_model)
-G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
+G122_LSD <- myLSD(bproj$Score, bproj$Isolate, G122_model, p.adj = "bonferroni")
 # Isolate is significant
 
 # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -443,7 +443,7 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 # the isolate means per experiment. 
 isolate_data <- bind_rows(`Dassel DLB`              = asum, 
                           `IAC-Alvorada DLB`        = csum, 
-                          `G133 Straw Test`         = bsum, 
+                          `G122 Straw Test`         = bsum, 
                           `IAC-Alvorada Straw Test` = dsum,
                           .id = "Experiment")
 isolate_summary <- isolate_data %>% 

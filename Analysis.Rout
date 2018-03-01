@@ -293,11 +293,11 @@ Missing column names filled in: 'X1' [1]
 +   group_by(Isolate) %>%
 +   summarise(
 +     n = n(),
-+     mean = mean(`8 dai (cm)`, na.rm = TRUE),
-+     min = min(`8 dai (cm)`, na.rm = TRUE),
-+     max = max(`8 dai (cm)`, na.rm = TRUE),
-+     sd = sd(`8 dai (cm)`, na.rm = TRUE),
-+     se = plotrix::std.error(`8 dai (cm)`, na.rm = TRUE)
++     mean = mean(Score, na.rm = TRUE),
++     min = min(Score, na.rm = TRUE),
++     max = max(Score, na.rm = TRUE),
++     sd = sd(Score, na.rm = TRUE),
++     se = plotrix::std.error(Score, na.rm = TRUE)
 +   )
 > csum <- cproj %>%
 +   group_by(Isolate, Collection) %>%
@@ -603,15 +603,15 @@ Warning messages:
 > #
 > #
 > # G122 by Isolate ---------------------------------------------------------
-> G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+> G122_model <- lmer(Score ~ Isolate + (1 | Block), data = bproj)
 > anova(G122_model)
 Analysis of Variance Table of type III  with  Satterthwaite 
 approximation for degrees of freedom
         Sum Sq Mean Sq NumDF  DenDF F.value    Pr(>F)    
-Isolate 403.12  13.004    31 339.12  4.8854 3.797e-14 ***
+Isolate 112.69  3.6353    31 340.07  5.3378 6.661e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-> G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
+> G122_LSD <- myLSD(bproj$Score, bproj$Isolate, G122_model, p.adj = "bonferroni")
 > # Isolate is significant
 > 
 > # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -647,7 +647,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 > # the isolate means per experiment. 
 > isolate_data <- bind_rows(`Dassel DLB`              = asum, 
 +                           `IAC-Alvorada DLB`        = csum, 
-+                           `G133 Straw Test`         = bsum, 
++                           `G122 Straw Test`         = bsum, 
 +                           `IAC-Alvorada Straw Test` = dsum,
 +                           .id = "Experiment")
 > isolate_summary <- isolate_data %>% 
@@ -889,7 +889,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  language (EN)                        
  collate  en_US.UTF-8                 
  tz       America/Chicago             
- date     2018-02-28                  
+ date     2018-03-01                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version  date       source        
