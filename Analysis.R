@@ -502,7 +502,7 @@ isolate_data_arranged <- isolate_data %>%
   mutate(sum = sum(mean, na.rm = TRUE)) %>%
   filter(length(unique(Experiment)) >= 3) %>%
   ungroup() %>%
-  filter(sumtop > 0) %>%
+  # filter(sumtop > 0) %>%
   arrange(-sumtop) %>%
   mutate(Isolate = fct_inorder(Isolate)) 
 isolate_data_arranged
@@ -536,18 +536,31 @@ pal <- c(
   "IAC-Alvorada Straw Test_NA" = "#E78AC3"
 )
 
-ggplot(isolate_data_arranged, aes(x = Isolate, y = mean, fill = EC, alpha = top)) +
-  geom_col() +
+explot <- ggplot(isolate_data_arranged, aes(x = Isolate, y = mean)) +
+  geom_col(aes(fill = fct_relevel(EC, names(pal)), color = top)) +
+  geom_col(aes(linetype = top), fill = NA) +
   scale_fill_manual(values = pal) +
-  scale_alpha_discrete(range = c(0.3, 1)) +
+  scale_color_manual(values = c("FALSE" = NA, "TRUE" = "black"), guide = "none") +
+  scale_linetype_manual(values = c("FALSE" = "blank", "TRUE" = "solid"), guide = "none") +
   labs(list(
+    title = "Isolates ranked in at least three experiments",
     fill = "Experiment/Collection",
-    alpha = "In the top 10"
+    caption = "Bars with borders = ranked in the top 10",
+    y = "cumulative mean"
   )) +
   sydney_theme +
-  ggtitle("Isolates ranked in the top 10 across at least three experiments") +
+  theme(aspect.ratio = 0.62) +
   theme(axis.title.x = element_text(color = "black"))
 
+ggsave(plot = explot, 
+       filename = "figures/supplementary-rank.pdf", 
+       width = 11,
+       height = 6.5)
+ggsave(plot = explot, 
+       filename = "figures/supplementary-rank.png",
+       dpi = 600, 
+       width = 11,
+       height = 6.5)
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================
