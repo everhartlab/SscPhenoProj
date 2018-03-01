@@ -561,6 +561,11 @@ ggsave(plot = explot,
        dpi = 600, 
        width = 11,
        height = 6.5)
+ggsave(plot = explot, 
+       filename = "figures/supplementary-rank.tiff",
+       dpi = 900, 
+       width = 11,
+       height = 6.5)
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================
