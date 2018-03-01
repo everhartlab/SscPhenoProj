@@ -207,11 +207,11 @@ bsum <- bproj %>%
   group_by(Isolate) %>%
   summarise(
     n = n(),
-    mean = mean(`8 dai (cm)`, na.rm = TRUE),
-    min = min(`8 dai (cm)`, na.rm = TRUE),
-    max = max(`8 dai (cm)`, na.rm = TRUE),
-    sd = sd(`8 dai (cm)`, na.rm = TRUE),
-    se = plotrix::std.error(`8 dai (cm)`, na.rm = TRUE)
+    mean = mean(Score, na.rm = TRUE),
+    min = min(Score, na.rm = TRUE),
+    max = max(Score, na.rm = TRUE),
+    sd = sd(Score, na.rm = TRUE),
+    se = plotrix::std.error(Score, na.rm = TRUE)
   )
 csum <- cproj %>%
   group_by(Isolate, Collection) %>%
@@ -417,9 +417,9 @@ csum %>%
 #
 #
 # G122 by Isolate ---------------------------------------------------------
-G122_model <- lmer(`8 dai (cm)` ~ Isolate + (1 | Block), data = bproj)
+G122_model <- lmer(Score ~ Isolate + (1 | Block), data = bproj)
 anova(G122_model)
-G122_LSD <- myLSD(bproj$`8 dai (cm)`, bproj$Isolate, G122_model, p.adj = "bonferroni")
+G122_LSD <- myLSD(bproj$Score, bproj$Isolate, G122_model, p.adj = "bonferroni")
 # Isolate is significant
 
 # IAC-Alvorada by Isolate: Straw Test -------------------------------------
@@ -436,6 +436,49 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 # Isolate is significant, however, this is largely driven by one 
 # under-performing isolate (2D).
 
+# Summary table across isolates -------------------------------------------
+# 
+# It would be nice to find out if there are any isolates that are consistently
+# outperforming all other isolates. Here, I will create a table that aggregates
+dir.create(here("tables"))
+# the isolate means per experiment. 
+isolate_data <- bind_rows(`Dassel DLB`              = asum, 
+                          `IAC-Alvorada DLB`        = csum, 
+                          `G122 Straw Test`         = bsum, 
+                          `IAC-Alvorada Straw Test` = dsum,
+                          .id = "Experiment")
+isolate_data %>% 
+  filter(grepl("Straw", Experiment)) %>% 
+  group_by(Experiment) %>% 
+  mutate(class = case_when(
+    mean >= 7 ~ "Aggressive (7-9)",
+    mean >= 4 ~ "Intermediate (4-6)",
+    TRUE      ~ "Non-Aggressive (1-3)"
+  )) %>%
+  mutate(n = n()) %>%
+  count(class, n) %>%
+  mutate(n = 100 * (nn/n)) %>%
+  rename(N = nn, Class = class, `%` = n) %>%
+  select(Experiment, Class, N, `%`) %>% 
+  readr::write_csv("tables/straw-test-classifications.csv")
+isolate_summary <- isolate_data %>% 
+  group_by(Experiment, Collection) %>%
+  summarize(Min  = round(min(min), 3), 
+            Mean = round(mean(mean, na.rm = TRUE), 3), 
+            Max  = round(max(max), 3), 
+            `Top 10` = list(
+              data_frame(
+                Isolate        = head(Isolate[order(mean, decreasing = TRUE)], 10),
+                `Isolate Mean` = head(sort(mean, decreasing = TRUE), 10),
+                rank           = 1:10
+                )
+              )) %>%
+  arrange(grepl("Straw", Experiment))
+
+isolate_summary_print <- isolate_summary %>%
+  rowwise() %>%
+  mutate(`Top 10` = paste(`Top 10`$Isolate, collapse = ", ")) %>%
+  readr::write_csv(here("tables/isolate_summary.csv"))
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================
