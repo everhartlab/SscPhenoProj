@@ -440,12 +440,27 @@ ISC_ST_LSD2 <- myLSD(dproj2$Score, dproj2$Isolate, IAC_ST_model2, p.adj = "bonfe
 # 
 # It would be nice to find out if there are any isolates that are consistently
 # outperforming all other isolates. Here, I will create a table that aggregates
+dir.create(here("tables"))
 # the isolate means per experiment. 
 isolate_data <- bind_rows(`Dassel DLB`              = asum, 
                           `IAC-Alvorada DLB`        = csum, 
                           `G122 Straw Test`         = bsum, 
                           `IAC-Alvorada Straw Test` = dsum,
                           .id = "Experiment")
+isolate_data %>% 
+  filter(grepl("Straw", Experiment)) %>% 
+  group_by(Experiment) %>% 
+  mutate(class = case_when(
+    mean >= 7 ~ "Aggressive (7-9)",
+    mean >= 4 ~ "Intermediate (4-6)",
+    TRUE      ~ "Non-Aggressive (1-3)"
+  )) %>%
+  mutate(n = n()) %>%
+  count(class, n) %>%
+  mutate(n = 100 * (nn/n)) %>%
+  rename(N = nn, Class = class, `%` = n) %>%
+  select(Experiment, Class, N, `%`) %>% 
+  readr::write_csv("tables/straw-test-classifications.csv")
 isolate_summary <- isolate_data %>% 
   group_by(Experiment, Collection) %>%
   summarize(Min  = round(min(min), 3), 
@@ -460,7 +475,6 @@ isolate_summary <- isolate_data %>%
               )) %>%
   arrange(grepl("Straw", Experiment))
 
-dir.create(here("tables"))
 isolate_summary_print <- isolate_summary %>%
   rowwise() %>%
   mutate(`Top 10` = paste(`Top 10`$Isolate, collapse = ", ")) %>%
