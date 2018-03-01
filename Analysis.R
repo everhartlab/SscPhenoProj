@@ -554,18 +554,18 @@ explot <- ggplot(isolate_data_arranged, aes(x = Isolate, y = mean)) +
 
 ggsave(plot = explot, 
        filename = "figures/supplementary-rank.pdf", 
-       width = 11,
-       height = 6.5)
+       width = 9,
+       height = 5)
 ggsave(plot = explot, 
        filename = "figures/supplementary-rank.png",
        dpi = 600, 
-       width = 11,
-       height = 6.5)
+       width = 9,
+       height = 5)
 ggsave(plot = explot, 
        filename = "figures/supplementary-rank.tiff",
        dpi = 900, 
-       width = 11,
-       height = 6.5)
+       width = 9,
+       height = 5)
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================
