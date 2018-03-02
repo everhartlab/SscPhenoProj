@@ -51,6 +51,7 @@ library("plotrix")     # std.error() function
 library("cowplot")     # multi-panel plotting
 library("agricolae")   # LSD test
 library("lmerTest")    # random effects ANOVA
+library("lubridate")   # for converting stupid datetime values from excel
 
 # Packages of convenience -------------------------------------------------
 library("here")        # to burn setwd() to the ground
@@ -186,6 +187,32 @@ iproj <- read_excel(data_path, sheet = "I",na = excel_nas, range = "A1:D286",
     TRUE                 ~ Cultivar
   )) %>% 
   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
+
+
+# isolate origin information ----------------------------------------------
+# Downloading the file from the open science framework. 
+the_download <- try(download.file("https://osf.io/2yfre/download", here("MasterIsolateList.xlsx")))
+if (!inherits(the_download, "try-error")){
+  # reading in the excel sheet has its own problems since the date column contains
+  # part dates and part text and they get screwed up no matter what you do. The
+  # way I've dealt with this: import as dates and then convert what didn't parse
+  # into the number of days since 1899-12-30
+  metadata  <- read_excel(here("MasterIsolateList.xlsx"), col_types = "text", na = c("NA", "")) %>%
+    mutate(date = as.Date(parse_date_time(`JRS-Collection Date`, c("mdy", "y")))) %>%
+    mutate(date = case_when(
+      is.na(date) ~ as.Date("1899-12-30") + days(as.integer(`JRS-Collection Date`)),
+      TRUE        ~ date
+    )) %>%
+    select(-`JRS-Collection Date`) %>%
+    readr::write_csv(here("clean_data", "MasterIsolateList.csv"))
+  # This table provides information on how to find specific isolates in the JR
+  # Steadman collection. Here, we will challenge it against the A-D projects and
+  # see which isolates do not match:
+  anti_join(aproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
+  anti_join(bproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
+  anti_join(cproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
+  anti_join(dproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
+}
 
 # Analysis of aggressiveness (variation by isolate) -----------------------
 # 
@@ -576,6 +603,33 @@ ggsave(plot = explot,
        dpi = 900, 
        width = 9,
        height = 5)
+
+
+# Comparing isolates between DLB assays -----------------------------------
+# 
+# The DLB assays were performed on a Brazilian and non-Brazilian cultivar.
+# The question is: how do isolates shared between the tests compare?
+# 
+# Step 1: gather the isolates shared between projects
+isos <- inner_join(select(aproj, Isolate), select(cproj, Isolate)) %>%
+  count(Isolate) %>%
+  pull(Isolate)
+cat(isos, sep = ", ")
+
+# Step 2: Tabulate the number of experiments each isolate was ranked in the
+# top ten.
+isolate_summary %>%
+  unnest() %>%
+  filter(Isolate %in% isos, grepl("DLB", Experiment)) %>%
+  select(-matches("M")) %>%
+  spread(Isolate, rank, fill = 0) %>%
+  summarize_if(is.numeric, ~sum(. > 0)) %>%
+  gather(Isolate, Count, -Experiment) %>%
+  spread(Experiment, Count) %>%
+  arrange(`Dassel DLB` + `IAC-Alvorada DLB`) %>%
+  readr::write_csv(here("tables/DLB-comparison.csv")) %>%
+  print()
+
 
 # Cultivar tests ----------------------------------------------------------
 # =========================================================================

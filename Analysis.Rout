@@ -44,7 +44,7 @@ Loading required package: checkpoint
 checkpoint: Part of the Reproducible R Toolkit from Microsoft
 https://mran.microsoft.com/documents/rro/reproducibility/
 Scanning for packages used in this project
-- Discovered 13 packages
+- Discovered 14 packages
 All detected packages already installed
 checkpoint process complete
 ---
@@ -116,10 +116,25 @@ The following object is masked from ‘package:stats’:
 
     step
 
+> library("lubridate")   # for converting stupid datetime values from excel
+
+Attaching package: ‘lubridate’
+
+The following object is masked from ‘package:base’:
+
+    date
+
 > 
 > # Packages of convenience -------------------------------------------------
 > library("here")        # to burn setwd() to the ground
 here() starts at /Users/zhian/Documents/Everhart/SscPhenoProj
+
+Attaching package: ‘here’
+
+The following object is masked from ‘package:lubridate’:
+
+    here
+
 > library("sessioninfo") # to know where we stand
 > 
 > dir.create(here("clean_data"))
@@ -272,6 +287,58 @@ Missing column names filled in: 'X1' [1]
 +     TRUE                 ~ Cultivar
 +   )) %>% 
 +   readr::write_csv(path = here("clean_data", "I_ST_DryBean_Cultivars-2.csv"))
+> 
+> 
+> # isolate origin information ----------------------------------------------
+> # Downloading the file from the open science framework. 
+> the_download <- try(download.file("https://osf.io/2yfre/download", here("MasterIsolateList.xlsx")))
+trying URL 'https://osf.io/2yfre/download'
+Content type 'application/octet-stream' length 49473 bytes (48 KB)
+==================================================
+downloaded 48 KB
+
+> if (!inherits(the_download, "try-error")){
++   # reading in the excel sheet has its own problems since the date column contains
++   # part dates and part text and they get screwed up no matter what you do. The
++   # way I've dealt with this: import as dates and then convert what didn't parse
++   # into the number of days since 1899-12-30
++   metadata  <- read_excel(here("MasterIsolateList.xlsx"), col_types = "text", na = c("NA", "")) %>%
++     mutate(date = as.Date(parse_date_time(`JRS-Collection Date`, c("mdy", "y")))) %>%
++     mutate(date = case_when(
++       is.na(date) ~ as.Date("1899-12-30") + days(as.integer(`JRS-Collection Date`)),
++       TRUE        ~ date
++     )) %>%
++     select(-`JRS-Collection Date`) %>%
++     readr::write_csv(here("clean_data", "MasterIsolateList.csv"))
++   # This table provides information on how to find specific isolates in the JR
++   # Steadman collection. Here, we will challenge it against the A-D projects and
++   # see which isolates do not match:
++   anti_join(aproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
++   anti_join(bproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
++   anti_join(cproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
++   anti_join(dproj, metadata, by = c("Isolate" = "AP-GenoID")) %>% count(Isolate) %>% print()
++ }
+# A tibble: 3 x 2
+  Isolate     n
+  <chr>   <int>
+1 1*         30
+2 139        30
+3 33         30
+# A tibble: 0 x 2
+# ... with 2 variables: Isolate <chr>, n <int>
+# A tibble: 2 x 2
+  Isolate     n
+  <chr>   <int>
+1 972B       30
+2 972D       30
+# A tibble: 2 x 2
+  Isolate     n
+  <chr>   <int>
+1 972B       11
+2 972D       11
+Warning messages:
+1:  11 failed to parse. 
+2: In period(day = x) : NAs introduced by coercion
 > 
 > # Analysis of aggressiveness (variation by isolate) -----------------------
 > # 
@@ -818,6 +885,48 @@ In dir.create(here("tables")) :
 +        width = 9,
 +        height = 5)
 > 
+> 
+> # Comparing isolates between DLB assays -----------------------------------
+> # 
+> # The DLB assays were performed on a Brazilian and non-Brazilian cultivar.
+> # The question is: how do isolates shared between the tests compare?
+> # 
+> # Step 1: gather the isolates shared between projects
+> isos <- inner_join(select(aproj, Isolate), select(cproj, Isolate)) %>%
++   count(Isolate) %>%
++   pull(Isolate)
+Joining, by = "Isolate"
+> cat(isos, sep = ", ")
+973D, 974B, 974C, 975C, 975E, 976B, 977A, 977B, 977C, 977E, 978A> 
+> # Step 2: Tabulate the number of experiments each isolate was ranked in the
+> # top ten.
+> isolate_summary %>%
++   unnest() %>%
++   filter(Isolate %in% isos, grepl("DLB", Experiment)) %>%
++   select(-matches("M")) %>%
++   spread(Isolate, rank, fill = 0) %>%
++   summarize_if(is.numeric, ~sum(. > 0)) %>%
++   gather(Isolate, Count, -Experiment) %>%
++   spread(Experiment, Count) %>%
++   arrange(`Dassel DLB` + `IAC-Alvorada DLB`) %>%
++   readr::write_csv(here("tables/DLB-comparison.csv")) %>%
++   print()
+Adding missing grouping variables: `Experiment`
+# A tibble: 10 x 3
+   Isolate `Dassel DLB` `IAC-Alvorada DLB`
+   <chr>          <int>              <int>
+ 1 975E               0                  1
+ 2 977B               1                  0
+ 3 977E               0                  1
+ 4 973D               1                  1
+ 5 975C               0                  2
+ 6 977A               0                  2
+ 7 977C               0                  2
+ 8 978A               0                  2
+ 9 976B               2                  1
+10 974C               3                  1
+> 
+> 
 > # Cultivar tests ----------------------------------------------------------
 > # =========================================================================
 > # 
@@ -1092,7 +1201,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  LearnBayes     2.15     2014-05-29 CRAN (R 3.4.0)
  lme4         * 1.1-15   2017-12-21 CRAN (R 3.4.3)
  lmerTest     * 2.0-36   2017-11-30 CRAN (R 3.4.3)
- lubridate      1.7.1    2017-11-03 cran (@1.7.1) 
+ lubridate    * 1.7.3    2018-02-27 CRAN (R 3.4.3)
  magrittr       1.5      2014-11-22 CRAN (R 3.4.0)
  MASS           7.3-48   2017-12-25 CRAN (R 3.4.3)
  Matrix       * 1.2-12   2017-11-20 CRAN (R 3.4.3)

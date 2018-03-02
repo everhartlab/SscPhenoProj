@@ -1,0 +1,96 @@
+MCG,AP-GenoID,InventoryID,in-JRS-collection,AP-Continent_Country_Population,JRS-Isolate #,JRS-Source (Host),JRS-Geographical Location,JRS-Notes,date
+A,143,143,TRUE,North America_United States_Nebraska,143,Soybeans,"Greeley, CO","Called ""Colorado""",1977-01-01
+K,202,202,TRUE,North America_United States_Nebraska,202,Soybean,"Ithaca, NE",Hobbit,1990-09-01
+K,264,264,TRUE,North America_United States_Nebraska,264,Soybeans,"Platte Co., NE",0,1994-07-01
+H,265,265,TRUE,North America_United States_Nebraska,265,Soybeans,"Tekamah, Burt Co., NE",0,1994-08-01
+A,266,266,TRUE,North America_United States_Nebraska,266,Soybeans,"Saunders Co., NE",0,1994-08-01
+I,267,267,TRUE,North America_United States_Nebraska,267,Soybeans,"Bellwood, NE",ICI-297,1994-09-01
+J,268,268,TRUE,North America_United States_Nebraska,268,Soybeans,"Herman, NE",NK-2939,1994-09-01
+A,276,276,TRUE,North America_United States_Nebraska,276,Soybean,"Ord, NE","30 sclerotia direct from field, Peterson farm",1996-09-01
+K,289,289,TRUE,North America_United States_Nebraska,289,Soybeans,"UNL PN, Lincoln, NE","From Les Craven, ""Willams 82""",1996-01-01
+C,293A,293,FALSE,South America_Argentina_Argentina,293,Soybean Cull,Argentina,"Juan C. Suarez, Marcos Juarez",1996-01-01
+D,293B,293,FALSE,South America_Argentina_Argentina,293,Soybean Cull,Argentina,"Juan C. Suarez, Marcos Juarez",1996-01-01
+E,293C,293,FALSE,South America_Argentina_Argentina,293,Soybean Cull,Argentina,"Juan C. Suarez, Marcos Juarez",1996-01-01
+F,293D,293,FALSE,South America_Argentina_Argentina,293,Soybean Cull,Argentina,"Juan C. Suarez, Marcos Juarez",1996-01-01
+G,293E,293,FALSE,South America_Argentina_Argentina,293,Soybean Cull,Argentina,"Juan C. Suarez, Marcos Juarez",1996-01-01
+B,399A,399,FALSE,North America_United States_Nebraska,399,Soybean,"Mead, Nebraska",from Blue plates (see special notes),1999-08-01
+B,399B,399,FALSE,North America_United States_Nebraska,399,Soybean,"Mead, Nebraska",from Blue plates (see special notes),1999-08-01
+M,541A,541,FALSE,North America_United States_Nebraska,541,Soybean,"Ewing, NE","Clayton Hoke farm, Dekalb 2551, treated field with",2012-09-23
+J,541B,541,FALSE,North America_United States_Nebraska,541,Soybean,"Ewing, NE","Clayton Hoke farm, Dekalb 2551, treated field with",2012-09-23
+L,834A,834,FALSE,North America_United States_Nebraska,834,soybean,"Auburn, NE",field collection,2009-08-01
+L,834B,834,FALSE,North America_United States_Nebraska,834,soybean,"Auburn, NE",field collection,2009-08-01
+NA,978E2,978,FALSE,South America_Brazil_G—ias,978,soybean,"Rio Verde/GO, Brazil",Original sample; Field collection (cull),2012-01-01
+R,1010,1010,TRUE,South America_Brazil_Paran‡,1010,soybean,"Campo Mourão/PR, Brazil","Brazilian isolate- Thomas Miorini, original collected sclerotia",2014-01-01
+R,1011,1011,TRUE,South America_Brazil_Paran‡,1011,soybean,"Campo Mourão/PR, Brazil","Brazilian isolate- Thomas Miorini, original collected sclerotia",2014-01-01
+Q,1012,1012,TRUE,South America_Brazil_Paran‡,1012,soybean,"Campo Mourão/PR, Brazil","Brazilian isolate- Thomas Miorini, original collected sclerotia",2014-01-01
+Q,1013,1013,TRUE,South America_Brazil_Paran‡,1013,soybean,"Campo Mourão/PR, Brazil","Brazilian isolate- Thomas Miorini, original collected sclerotia",2014-01-01
+Q,1014,1014,TRUE,South America_Brazil_Paran‡,1014,soybean,"Campo Mourão/PR, Brazil","Brazilian isolate- Thomas Miorini, original collected sclerotia",2014-01-01
+N,1015,1015,TRUE,South America_Brazil_G—ias,1015,soybean,São Miguel do Passo Quatro/GO,"Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+N,1016,1016,TRUE,South America_Brazil_G—ias,1016,soybean,"Pinhão/PR, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+N,1017,1017,TRUE,South America_Brazil_Paran‡,1017,soybean,"Formoso, GO, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+R,1018,1018,TRUE,South America_Brazil_G—ias,1018,soybean,"Guarapuava, PR, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+N,1019,1019,TRUE,South America_Brazil_Bahia,1019,soybean,"Luiz Eduardo Magalhães/BA, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+Y,1020,NA,FALSE,South America_Brazil_Paran‡,NA,soybean,"Pinhão/PR, Brazil","Used for MCG and SSR genotyping, but did not produce sclerotia so is not in JRS inventory",2012-01-01
+Z,1021,1020,TRUE,South America_Brazil_Paran‡,1020,soybean,"Mauá da Serra/PR, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+N,1022,1021,TRUE,South America_Brazil_Rio Grande do Sul,1021,soybean,"Nᾶo me Toque/Rio Grande do Sul, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+N,1023,1022,TRUE,South America_Brazil_Bahia,1022,soybean,"Sᾶo Desidério/Bahia, Brazil","Brazilian isolate- Thomas Miorini, single spore isolation",2012-01-01
+NA,1,1229,TRUE,South America_Brazil_G—ias,1229,soybean,"Jataí/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 1 (P)),2010-01-01
+NA,3,1230,TRUE,South America_Brazil_G—ias,1230,soybean,"Jataí/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 3 (P)),2010-01-01
+NA,5,1231,TRUE,South America_Brazil_G—ias,1231,soybean,"Cristalina/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 5 (P)),2010-01-01
+NA,6,1232,TRUE,South America_Brazil_G—ias,1232,soybean,"Formosa/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 6 (P)),2010-01-01
+NA,7,1233,TRUE,South America_Brazil_G—ias,1233,soybean,"Formosa/GO, Brazil",Brazilian isolate -Thomas MIorini (old label 7 (P)),2010-01-01
+NA,8,1234,TRUE,South America_Brazil_G—ias,1234,soybean,"Sudeste/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 8 (P)),2010-01-01
+NA,9,1235,TRUE,South America_Brazil_G—ias,1235,soybean,"Sudeste/GO, Brazil",Brazilian isolate -Thomas Miorini (old label 9 (P)),2010-01-01
+NA,12,1236,TRUE,South America_Brazil_G—ias,1236,soybean,"Sudeste/GO, Brazil",Brazilian isolate - Thomas Miorini (old label 12 (P)),2010-01-01
+NA,13,1237,TRUE,South America_Brazil_G—ias,1237,soybean,"Sudeste/GO, Brazil",Brazilian isolate - Thomas MIorini (old label 13 (P)),2010-01-01
+NA,14,1238,TRUE,South America_Brazil_G—ias,1238,soybean,"Sudeste/GO, Brazil",Brazilian isolate - Thomas Miorni (old label 14 (P)),2010-01-01
+NA,15,1239,TRUE,South America_Brazil_Minas Gerias,1239,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorni (old label 15 (P)),2009-01-01
+NA,16,1240,TRUE,South America_Brazil_Minas Gerias,1240,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorini (old label 16 (P)),2009-01-01
+NA,17,1241,TRUE,South America_Brazil_Minas Gerias,1241,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorini (old label 17 (P)),2009-01-01
+NA,18,1242,TRUE,South America_Brazil_Minas Gerias,1242,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorini (old label 18 (P)),2009-01-01
+NA,20,1243,TRUE,South America_Brazil_Minas Gerias,1243,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorini (old label 20 (P)),2009-01-01
+NA,22,1244,TRUE,South America_Brazil_Minas Gerias,1244,soybean,"Uberlândia/MG, Brazil",Brazilian isolate -Thomas Miorini (old label 22(P)),2009-01-01
+NA,24,1245,TRUE,South America_Brazil_Minas Gerias,1245,soybean,"Uberlândia/MG, Brazil",Brazilian isolate - Thomas Miorini (old label 24 (P)),2009-01-01
+NA,25,1246,TRUE,South America_Brazil_Bahia,1246,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 25 (P)),2010-01-01
+NA,26,1247,TRUE,South America_Brazil_Bahia,1247,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 26 (P)),2010-01-01
+NA,27,1248,TRUE,South America_Brazil_Bahia,1248,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 27 (P)),2010-01-01
+NA,29,1249,TRUE,South America_Brazil_Bahia,1249,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 29 (P)),2010-01-01
+NA,31,1250,TRUE,South America_Brazil_Bahia,1250,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 31 (P)),2010-01-01
+NA,32,1251,TRUE,South America_Brazil_Bahia,1251,soybean,"Correntina/BA, Brazil",Brazilian isolate - Thomas Miorini (old label 32 (P)),2010-01-01
+NA,9986,NA,FALSE,South America_Brazil_Rio Grande do Sul,NA,NA,NA,This AP-GenoID is unidentified.  Do not use in analysis.,NA
+N,973A,973A,TRUE,South America_Brazil_Bahia,973A,soybean,"Bahia, Brazil",single-sclerotium isolate from the original (973),2012-01-01
+P,973B,973B,TRUE,South America_Brazil_Bahia,973B,soybean,"Bahia, Brazil",single-sclerotium isolate from the original (973),2012-01-01
+P,973C,973C,TRUE,South America_Brazil_Bahia,973C,soybean,"Bahia, Brazil",single-sclerotium isolate from the original (973),2012-01-01
+P,973D,973D,TRUE,South America_Brazil_Bahia,973D,soybean,"Bahia, Brazil",single-sclerotium isolate from the original (973),2012-01-01
+U,973E,973E,TRUE,South America_Brazil_Bahia,973E,soybean,"Bahia, Brazil",single-sclerotium isolate from the original (973),2012-01-01
+O,974A,974A,TRUE,South America_Brazil_Rio Grande do Sul,974A,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (974),2012-01-01
+O,974B,974B,TRUE,South America_Brazil_Rio Grande do Sul,974B,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (974),2012-01-01
+V,974C,974C,TRUE,South America_Brazil_Rio Grande do Sul,974C,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (974),2012-01-01
+O,974D,974D,TRUE,South America_Brazil_Rio Grande do Sul,974D,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (974),2012-01-01
+O,974E,974E,TRUE,South America_Brazil_Rio Grande do Sul,974E,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (974),2012-01-01
+Q,975A,975A,TRUE,South America_Brazil_Rio Grande do Sul,975A,soybean,"Coxilha/RS, Brazil",single-sclerotium isolate from the original (975),2012-01-01
+R,975B,975B,TRUE,South America_Brazil_Rio Grande do Sul,975B,soybean,"Coxilha/RS, Brazil",single-sclerotium isolate from the original (975),2012-01-01
+R,975C,975C,TRUE,South America_Brazil_Rio Grande do Sul,975C,soybean,"Coxilha/RS, Brazil",single-sclerotium isolate from the original (975),2012-01-01
+W,975D,975D,TRUE,South America_Brazil_Rio Grande do Sul,975D,soybean,"Coxilha/RS, Brazil",single-sclerotium isolate from the original (975),2012-01-01
+Q,975E,975E,TRUE,South America_Brazil_Rio Grande do Sul,975E,soybean,"Coxilha/RS, Brazil",single-sclerotium isolate from the original (975),2012-01-01
+S,976A,976A,TRUE,South America_Brazil_Paran‡,976A,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+T,976B,976B,TRUE,South America_Brazil_Paran‡,976B,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+NA,976B2,976B,FALSE,South America_Brazil_Paran‡,976B,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+S,976C,976C,TRUE,South America_Brazil_Paran‡,976C,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+T,976D,976D,TRUE,South America_Brazil_Paran‡,976D,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+T,976E,976E,TRUE,South America_Brazil_Paran‡,976E,soybean,"Faxinal/PR, Brazil",single-sclerotium isolate from the original (976),2012-01-01
+T,977A,977A,TRUE,South America_Brazil_Mato Grosso do Sul,977A,soybean,"Chapadão do Sul/MS, Brazil",single-sclerotium isolate from the original (977),2012-01-01
+U,977B,977B,TRUE,South America_Brazil_Mato Grosso do Sul,977B,soybean,"Chapadão do Sul/MS, Brazil",single-sclerotium isolate from the original (977),2012-01-01
+I,977C,977C,TRUE,South America_Brazil_Mato Grosso do Sul,977C,soybean,"Chapadão do Sul/MS, Brazil",single-sclerotium isolate from the original (977),2012-01-01
+I,977D,977D,TRUE,South America_Brazil_Mato Grosso do Sul,977D,soybean,"Chapadão do Sul/MS, Brazil",single-sclerotium isolate from the original (977),2012-01-01
+N,977E,977E,TRUE,South America_Brazil_Mato Grosso do Sul,977E,soybean,"Chapadão do Sul/MS, Brazil",single-sclerotium isolate from the original (977),2012-01-01
+N,978A,978A,TRUE,South America_Brazil_G—ias,978A,soybean,"Rio Verde/GO, Brazil",single-sclerotium isolate from the original (978),2012-01-01
+N,978B,978B,TRUE,South America_Brazil_G—ias,978B,soybean,"Rio Verde/GO, Brazil",single-sclerotium isolate from the original (978),2012-01-01
+N,978C,978C,TRUE,South America_Brazil_G—ias,978C,soybean,"Rio Verde/GO, Brazil",single-sclerotium isolate from the original (978),2012-01-01
+N,978D,978D,TRUE,South America_Brazil_G—ias,978D,soybean,"Rio Verde/GO, Brazil",single-sclerotium isolate from the original (978),2012-01-01
+N,978E,978E,TRUE,South America_Brazil_G—ias,978E,soybean,"Rio Verde/GO, Brazil",single-sclerotium isolate from the original (978),2012-01-01
+O,979A,979A,TRUE,South America_Brazil_Rio Grande do Sul,979A,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (979),2012-01-01
+N,979B,979B,TRUE,South America_Brazil_Rio Grande do Sul,979B,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (979),2012-01-01
+O,979C,979C,TRUE,South America_Brazil_Rio Grande do Sul,979C,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (979),2012-01-01
+N,979D,979D,TRUE,South America_Brazil_Rio Grande do Sul,979D,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (979),2012-01-01
+N,979E,979E,TRUE,South America_Brazil_Rio Grande do Sul,979E,soybean,"Vacaria/RS, Brazil",single-sclerotium isolate from the original (979),2012-01-01
