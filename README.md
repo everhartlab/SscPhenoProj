@@ -282,6 +282,11 @@ Straw Test: First experimental replicate for dry bean cultivars
 This experiment was to determine which isolate was to be used for the Straw
 Test: 972B or 972D.
 
+Note: Because 972B was very aggressive, TJJM had additionally scored some of the
+isolates higher than 9 according to a Modified Petzoldt and Dickson Scale. 
+However, when reporting the results of these data, numbers higher than 9 were
+converted to 9.
+
  - 322 Rows
  - 5 Columns
  - 23 cultivars
@@ -299,7 +304,7 @@ Test: 972B or 972D.
 
 ### Sheet I
 
-Straw Test: Second experimental replicate for dry bean cultivars with isolate 2D
+Straw Test: Second experimental replicate for dry bean cultivars with isolate 972D
 
 > Corresponding clean data: [I_ST_DryBean_Cultivars-2.csv](clean_data/I_ST_DryBean_Cultivars-2.csv)
 
