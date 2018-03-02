@@ -484,6 +484,17 @@ isolate_summary_print <- isolate_summary %>%
 # be to arrange these isolates by the number of times an isolate is in the top 
 # 10 of any experiment and is assessed over at least three of the four 
 # experiments. 
+
+experiment_order <-c(
+  "Dassel DLB_first" = "Dassel DLB (21 dae)",
+  "Dassel DLB_second" = "Dassel DLB (28 dae)",
+  "Dassel DLB_third" = "Dassel DLB (35 dae)",
+  "IAC-Alvorada DLB_first" = "IAC-Alvorada DLB (21 dae)",
+  "IAC-Alvorada DLB_second" = "IAC-Alvorada DLB (28 dae)",
+  "IAC-Alvorada DLB_third" = "IAC-Alvorada DLB (35 dae)",
+  "G122 Straw Test_NA" = "G122 Straw Test",
+  "IAC-Alvorada Straw Test_NA" = "IAC-Alvorada Straw Test" 
+)
 isolate_data_arranged <- isolate_data %>%
   ungroup() %>%
   filter(is.finite(mean)) %>%
@@ -504,7 +515,9 @@ isolate_data_arranged <- isolate_data %>%
   ungroup() %>%
   # filter(sumtop > 0) %>%
   arrange(-sumtop) %>%
-  mutate(Isolate = fct_inorder(Isolate)) 
+  mutate(Isolate = fct_inorder(Isolate)) %>%
+  mutate(EC = fct_relevel(EC, names(experiment_order))) %>%
+  mutate(EC = `levels<-`(EC, experiment_order))
 isolate_data_arranged
 
 # Here, I'm creating a summary table that summarizes what the data shows. This
@@ -526,32 +539,29 @@ isolate_data_arranged %>%
 # This barplot summarizes the above table by using transparency to denote the
 # top 10. 
 pal <- c(
-  "Dassel DLB_first" = "#B2E0D2",
-  "Dassel DLB_second" = "#8CD1BB",
-  "Dassel DLB_third" = "#66C2A5",
-  "IAC-Alvorada DLB_first" = "#FDC6B0",
-  "IAC-Alvorada DLB_second" = "#FCA989",
-  "IAC-Alvorada DLB_third" = "#FC8D62",
-  "G122 Straw Test_NA" = "#8DA0CB",
-  "IAC-Alvorada Straw Test_NA" = "#E78AC3"
+  "Dassel DLB (21 dae)" = "#B2E0D2",
+  "Dassel DLB (28 dae)" = "#8CD1BB",
+  "Dassel DLB (35 dae)" = "#66C2A5",
+  "IAC-Alvorada DLB (21 dae)" = "#FDC6B0",
+  "IAC-Alvorada DLB (28 dae)" = "#FCA989",
+  "IAC-Alvorada DLB (35 dae)" = "#FC8D62",
+  "G122 Straw Test" = "#8DA0CB",
+  "IAC-Alvorada Straw Test" = "#E78AC3"
 )
 
 explot <- ggplot(isolate_data_arranged, aes(x = Isolate, y = mean)) +
-  geom_col(aes(fill = fct_relevel(EC, names(pal)), color = top)) +
-  geom_col(aes(linetype = top), fill = NA) +
+  geom_col(aes(fill = EC, color = top)) +
   scale_fill_manual(values = pal) +
-  scale_color_manual(values = c("FALSE" = NA, "TRUE" = "black"), guide = "none") +
-  scale_linetype_manual(values = c("FALSE" = "blank", "TRUE" = "solid"), guide = "none") +
+  scale_color_manual(values = c("FALSE" = "#FFFFFF69", "TRUE" = "black"), guide = "none") +
   labs(list(
     title = "Isolates ranked in at least three experiments",
-    fill = "Experiment/Collection",
+    fill = "Experiment (Replicate)",
     caption = "Bars with borders = ranked in the top 10",
     y = "cumulative mean"
   )) +
   sydney_theme +
-  theme(aspect.ratio = 0.62) +
-  theme(axis.title.x = element_text(color = "black"))
-
+  theme(aspect.ratio = 0.62)
+explot
 ggsave(plot = explot, 
        filename = "figures/supplementary-rank.pdf", 
        width = 9,

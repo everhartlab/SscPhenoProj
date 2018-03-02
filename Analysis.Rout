@@ -691,6 +691,17 @@ In dir.create(here("tables")) :
 > # be to arrange these isolates by the number of times an isolate is in the top 
 > # 10 of any experiment and is assessed over at least three of the four 
 > # experiments. 
+> 
+> experiment_order <-c(
++   "Dassel DLB_first" = "Dassel DLB (21 dae)",
++   "Dassel DLB_second" = "Dassel DLB (28 dae)",
++   "Dassel DLB_third" = "Dassel DLB (35 dae)",
++   "IAC-Alvorada DLB_first" = "IAC-Alvorada DLB (21 dae)",
++   "IAC-Alvorada DLB_second" = "IAC-Alvorada DLB (28 dae)",
++   "IAC-Alvorada DLB_third" = "IAC-Alvorada DLB (35 dae)",
++   "G122 Straw Test_NA" = "G122 Straw Test",
++   "IAC-Alvorada Straw Test_NA" = "IAC-Alvorada Straw Test" 
++ )
 > isolate_data_arranged <- isolate_data %>%
 +   ungroup() %>%
 +   filter(is.finite(mean)) %>%
@@ -711,7 +722,9 @@ In dir.create(here("tables")) :
 +   ungroup() %>%
 +   # filter(sumtop > 0) %>%
 +   arrange(-sumtop) %>%
-+   mutate(Isolate = fct_inorder(Isolate)) 
++   mutate(Isolate = fct_inorder(Isolate)) %>%
++   mutate(EC = fct_relevel(EC, names(experiment_order))) %>%
++   mutate(EC = `levels<-`(EC, experiment_order))
 > isolate_data_arranged
 # A tibble: 106 x 15
    EC        Experiment  Isolate Collection     n  mean   min   max    sd    se
@@ -747,19 +760,19 @@ In dir.create(here("tables")) :
 # A tibble: 16 x 5
    Isolate `In the Top 10`   `%` `N Experiments` Experiments                   
    <fct>             <int> <dbl>           <int> <chr>                         
- 1 976B                  5 0.625               4 Dassel DLB third, Dassel DLB …
- 2 974C                  4 0.571               3 Dassel DLB second, Dassel DLB…
- 3 973D                  3 0.375               4 Dassel DLB third, IAC-Alvorad…
- 4 975C                  3 0.375               4 IAC-Alvorada DLB first, IAC-A…
- 5 975E                  3 0.375               4 IAC-Alvorada DLB third, G122 …
- 6 977C                  3 0.429               3 IAC-Alvorada DLB first, IAC-A…
- 7 977B                  2 0.250               4 Dassel DLB third, IAC-Alvorad…
- 8 977A                  2 0.286               3 IAC-Alvorada DLB second, IAC-…
- 9 978A                  2 0.286               3 IAC-Alvorada DLB first, IAC-A…
-10 975D                  2 0.400               3 IAC-Alvorada DLB third, IAC-A…
+ 1 976B                  5 0.625               4 Dassel DLB (35 dae), Dassel D…
+ 2 974C                  4 0.571               3 Dassel DLB (28 dae), Dassel D…
+ 3 973D                  3 0.375               4 Dassel DLB (35 dae), IAC-Alvo…
+ 4 975C                  3 0.375               4 IAC-Alvorada DLB (21 dae), IA…
+ 5 975E                  3 0.375               4 IAC-Alvorada DLB (35 dae), G1…
+ 6 977C                  3 0.429               3 IAC-Alvorada DLB (21 dae), IA…
+ 7 977B                  2 0.250               4 Dassel DLB (35 dae), IAC-Alvo…
+ 8 977A                  2 0.286               3 IAC-Alvorada DLB (28 dae), IA…
+ 9 978A                  2 0.286               3 IAC-Alvorada DLB (21 dae), IA…
+10 975D                  2 0.400               3 IAC-Alvorada DLB (35 dae), IA…
 11 973C                  2 0.400               3 G122 Straw Test, IAC-Alvorada…
-12 977E                  1 0.143               3 IAC-Alvorada DLB third        
-13 976C                  1 0.200               3 IAC-Alvorada DLB first        
+12 977E                  1 0.143               3 IAC-Alvorada DLB (35 dae)     
+13 976C                  1 0.200               3 IAC-Alvorada DLB (21 dae)     
 14 974B                  0 0                   4 ""                            
 15 973B                  0 0                   3 ""                            
 16 974D                  0 0                   3 ""                            
@@ -767,32 +780,29 @@ In dir.create(here("tables")) :
 > # This barplot summarizes the above table by using transparency to denote the
 > # top 10. 
 > pal <- c(
-+   "Dassel DLB_first" = "#B2E0D2",
-+   "Dassel DLB_second" = "#8CD1BB",
-+   "Dassel DLB_third" = "#66C2A5",
-+   "IAC-Alvorada DLB_first" = "#FDC6B0",
-+   "IAC-Alvorada DLB_second" = "#FCA989",
-+   "IAC-Alvorada DLB_third" = "#FC8D62",
-+   "G122 Straw Test_NA" = "#8DA0CB",
-+   "IAC-Alvorada Straw Test_NA" = "#E78AC3"
++   "Dassel DLB (21 dae)" = "#B2E0D2",
++   "Dassel DLB (28 dae)" = "#8CD1BB",
++   "Dassel DLB (35 dae)" = "#66C2A5",
++   "IAC-Alvorada DLB (21 dae)" = "#FDC6B0",
++   "IAC-Alvorada DLB (28 dae)" = "#FCA989",
++   "IAC-Alvorada DLB (35 dae)" = "#FC8D62",
++   "G122 Straw Test" = "#8DA0CB",
++   "IAC-Alvorada Straw Test" = "#E78AC3"
 + )
 > 
 > explot <- ggplot(isolate_data_arranged, aes(x = Isolate, y = mean)) +
-+   geom_col(aes(fill = fct_relevel(EC, names(pal)), color = top)) +
-+   geom_col(aes(linetype = top), fill = NA) +
++   geom_col(aes(fill = EC, color = top)) +
 +   scale_fill_manual(values = pal) +
-+   scale_color_manual(values = c("FALSE" = NA, "TRUE" = "black"), guide = "none") +
-+   scale_linetype_manual(values = c("FALSE" = "blank", "TRUE" = "solid"), guide = "none") +
++   scale_color_manual(values = c("FALSE" = "#FFFFFF69", "TRUE" = "black"), guide = "none") +
 +   labs(list(
 +     title = "Isolates ranked in at least three experiments",
-+     fill = "Experiment/Collection",
++     fill = "Experiment (Replicate)",
 +     caption = "Bars with borders = ranked in the top 10",
 +     y = "cumulative mean"
 +   )) +
 +   sydney_theme +
-+   theme(aspect.ratio = 0.62) +
-+   theme(axis.title.x = element_text(color = "black"))
-> 
++   theme(aspect.ratio = 0.62)
+> explot
 > ggsave(plot = explot, 
 +        filename = "figures/supplementary-rank.pdf", 
 +        width = 9,
@@ -1024,7 +1034,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  language (EN)                        
  collate  en_US.UTF-8                 
  tz       America/Chicago             
- date     2018-03-01                  
+ date     2018-03-02                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version  date       source        

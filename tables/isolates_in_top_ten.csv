@@ -1,17 +1,17 @@
 Isolate,In the Top 10,%,N Experiments,Experiments
-976B,5,0.625,4,"Dassel DLB third, Dassel DLB second, IAC-Alvorada DLB third, G122 Straw Test, IAC-Alvorada Straw Test"
-974C,4,0.5714285714285714,3,"Dassel DLB second, Dassel DLB first, Dassel DLB third, IAC-Alvorada DLB third"
-973D,3,0.375,4,"Dassel DLB third, IAC-Alvorada DLB second, G122 Straw Test"
-975C,3,0.375,4,"IAC-Alvorada DLB first, IAC-Alvorada DLB second, IAC-Alvorada Straw Test"
-975E,3,0.375,4,"IAC-Alvorada DLB third, G122 Straw Test, IAC-Alvorada Straw Test"
-977C,3,0.42857142857142855,3,"IAC-Alvorada DLB first, IAC-Alvorada DLB second, IAC-Alvorada Straw Test"
-977B,2,0.25,4,"Dassel DLB third, IAC-Alvorada Straw Test"
-977A,2,0.2857142857142857,3,"IAC-Alvorada DLB second, IAC-Alvorada DLB third"
-978A,2,0.2857142857142857,3,"IAC-Alvorada DLB first, IAC-Alvorada DLB second"
-975D,2,0.4,3,"IAC-Alvorada DLB third, IAC-Alvorada Straw Test"
+976B,5,0.625,4,"Dassel DLB (35 dae), Dassel DLB (28 dae), IAC-Alvorada DLB (35 dae), G122 Straw Test, IAC-Alvorada Straw Test"
+974C,4,0.5714285714285714,3,"Dassel DLB (28 dae), Dassel DLB (21 dae), Dassel DLB (35 dae), IAC-Alvorada DLB (35 dae)"
+973D,3,0.375,4,"Dassel DLB (35 dae), IAC-Alvorada DLB (28 dae), G122 Straw Test"
+975C,3,0.375,4,"IAC-Alvorada DLB (21 dae), IAC-Alvorada DLB (28 dae), IAC-Alvorada Straw Test"
+975E,3,0.375,4,"IAC-Alvorada DLB (35 dae), G122 Straw Test, IAC-Alvorada Straw Test"
+977C,3,0.42857142857142855,3,"IAC-Alvorada DLB (21 dae), IAC-Alvorada DLB (28 dae), IAC-Alvorada Straw Test"
+977B,2,0.25,4,"Dassel DLB (35 dae), IAC-Alvorada Straw Test"
+977A,2,0.2857142857142857,3,"IAC-Alvorada DLB (28 dae), IAC-Alvorada DLB (35 dae)"
+978A,2,0.2857142857142857,3,"IAC-Alvorada DLB (21 dae), IAC-Alvorada DLB (28 dae)"
+975D,2,0.4,3,"IAC-Alvorada DLB (35 dae), IAC-Alvorada Straw Test"
 973C,2,0.4,3,"G122 Straw Test, IAC-Alvorada Straw Test"
-977E,1,0.14285714285714285,3,IAC-Alvorada DLB third
-976C,1,0.2,3,IAC-Alvorada DLB first
+977E,1,0.14285714285714285,3,IAC-Alvorada DLB (35 dae)
+976C,1,0.2,3,IAC-Alvorada DLB (21 dae)
 974B,0,0,4,
 973B,0,0,3,
 974D,0,0,3,
