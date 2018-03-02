@@ -563,16 +563,16 @@ explot <- ggplot(isolate_data_arranged, aes(x = Isolate, y = mean)) +
   theme(aspect.ratio = 0.62)
 explot
 ggsave(plot = explot, 
-       filename = "figures/supplementary-rank.pdf", 
+       filename = "figures/isolate-rank.pdf", 
        width = 9,
        height = 5)
 ggsave(plot = explot, 
-       filename = "figures/supplementary-rank.png",
+       filename = "figures/isolate-rank.png",
        dpi = 600, 
        width = 9,
        height = 5)
 ggsave(plot = explot, 
-       filename = "figures/supplementary-rank.tiff",
+       filename = "figures/isolate-rank.tiff",
        dpi = 900, 
        width = 9,
        height = 5)
