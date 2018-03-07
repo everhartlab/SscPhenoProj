@@ -1,14 +1,17 @@
 # _Sclerotinia sclerotiorum_ Phenotyping Project
 
-This project contains the data and code used for analysis in:
+> Explore this analysis online: [![Binder](http://mybinder.org/badge.svg)](http://beta.mybinder.org/v2/gh/everhartlab/SscPhenoProj/master?urlpath=rstudio)
 
-> Miorini TJJ, Higgens R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (201X) 
-> Variation in pathogen aggression and cultivar performance against *Sclerotinia 
-> sclerotiorum* in soybean and dry bean from the U.S. and Brazil. _In Preparation_
+This project contains the data and code used for analysis in our preprint:
+
+> Miorini TJJ, Kamvar ZN, Higgins R, Raetano CG, Steadman JR, Everhart SE. (2018) 
+> Variation in pathogen aggression and cultivar performance against _Sclerotinia 
+> sclerotiorum_ in soybean and dry bean from Brazil and the U.S. *PeerJ Preprints* 
+> **6**:e26622v1 doi: [10.7287/peerj.preprints.26622v1](https://doi.org/10.7287/peerj.preprints.26622v1)
 
 If you use any of the scripts or data, please cite the project on the Open Science Framework:
 
-> Miorini TJJ, Higgens R, Raetano CG, Kamvar ZN, Steadman JR, Everhart SE (2018) 
+> Miorini TJJ, Kamvar ZN, Higgins R, Raetano CG, Steadman JR, Everhart SE (2018) 
 > Data and analysis for Variation in pathogen aggression and cultivar performance 
 > against *Sclerotinia sclerotiorum* in soybean and dry bean from the U.S. and Brazil. 
 > doi: [10.17605/OSF.IO/2X7FC](https://doi.org/10.17605/OSF.IO/2X7FC).
@@ -47,10 +50,6 @@ necessary packages installed. From there, you can open `Analysis.R` and run
 the analysis. Please note, however, that this integration is in Beta and may
 change in the future. Be aware that it may take some time to build the image
 before you can inspect the data and analyses.
-
-> Note: as of 2017-02-26, there was an issue with binder not adding the correct
-> path to the R library. There is a workaround by typing
-> `.libPaths("/srv/rlibs")` in the RStudio console once it loads.
 
 # Data
 
