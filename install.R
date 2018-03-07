@@ -7,3 +7,4 @@ install.packages("lmerTest")    # random effects ANOVA
 install.packages("here")        # to burn setwd() to the ground
 install.packages("sessioninfo") # to know where we stand
 install.packages("pillar") # kludge to get this installed correctly by checkpoint
+writeLines("R_LIBS_USER=/srv/rlibs", "~/.Renviron") # workaround for binder to work
