@@ -7,4 +7,5 @@
 *tiff
 .DS_Store
 .checkpoint/*/
+.checkpoint/*
 MasterIsolateList.xlsx

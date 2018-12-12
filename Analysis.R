@@ -49,7 +49,7 @@ library("tidyverse")   # data wrangling and rectangling + ggplot2
 library("readxl")      # read excel files
 library("plotrix")     # std.error() function
 library("cowplot")     # multi-panel plotting
-library("agricolae")   # LSD test
+library("agricolae")   # LSD test  ## Emerson recommends emmeans package instead
 library("lmerTest")    # random effects ANOVA
 library("lubridate")   # for converting stupid datetime values from excel
 
@@ -275,6 +275,10 @@ dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
     proj == "c" & Collection == "third"  ~ "IAC-Alvorada (35 dae)"
   ))
 st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
+# summarizing data that was previously shown in the figure so that it can be added to a table 
+# stopped here: dlb %>% group_by(proj) %>% print(n)
+
+
 
 sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
   theme(axis.text = element_text(color = "black")) +
