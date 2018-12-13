@@ -275,10 +275,28 @@ dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
     proj == "c" & Collection == "third"  ~ "IAC-Alvorada (35 dae)"
   ))
 st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
-# summarizing data that was previously shown in the figure so that it can be added to a table 
-# stopped here: dlb %>% group_by(proj) %>% print(n)
 
+# summarizing isolate aggressiveness 
 
+dlb %>% group_by(proj) %>% summarise(
+    avg=mean(mean, na.rm = T), 
+    n = sum(!is.na(mean)), 
+    sd=sd(mean, na.rm=T), 
+    se=sd(mean, na.rm=T)/sqrt(sum(!is.na(mean))),
+    min=min(mean, na.rm = T),
+    max=max(mean, na.rm = T)
+    )
+
+st %>% group_by(proj) %>% summarise(
+  avg=mean(mean, na.rm = T), 
+  n = sum(!is.na(mean)), 
+  sd=sd(mean, na.rm=T), 
+  se=sd(mean, na.rm=T)/sqrt(sum(!is.na(mean))),
+  min=min(mean, na.rm = T),
+  max=max(mean, na.rm = T)
+)
+
+# plotting isolate aggressiveness
 
 sydney_theme <- theme_bw(base_size = 16, base_family = "Helvetica") +
   theme(axis.text = element_text(color = "black")) +
