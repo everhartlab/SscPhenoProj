@@ -277,6 +277,13 @@ dlb <- bind_rows(a = asum, c = csum, .id = "proj") %>%
 st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
 
 # summarizing isolate aggressiveness 
+# first need to add country of origin to st and dlb, which come from metadata 'AP-Continent_Country_Population'
+ori <- metadata$`AP-Continent_Country_Population`
+ori[grep("_United States", metadata$`AP-Continent_Country_Population`)] <- "US"
+ori[grep("_Brazil", metadata$`AP-Continent_Country_Population`)] <- "BR"
+ori[grep("Argentina", metadata$`AP-Continent_Country_Population`)] <- "AR"
+metadata <- cbind(metadata,country=ori)
+
 
 dlb %>% group_by(proj) %>% summarise(
     avg=mean(mean, na.rm = T), 
