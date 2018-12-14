@@ -280,12 +280,21 @@ st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
 # first need to add country of origin to st and dlb, which come from metadata 'AP-Continent_Country_Population'
 ori <- metadata$`AP-Continent_Country_Population`
 ori[grep("_United States", metadata$`AP-Continent_Country_Population`)] <- "US"
-ori[grep("_Brazil", metadata$`AP-Continent_Country_Population`)] <- "BR"
-ori[grep("Argentina", metadata$`AP-Continent_Country_Population`)] <- "AR"
+ori[grep("_Brazil", metadata$`AP-Continent_Country_Population`)] <- "BR-AR"
+ori[grep("Argentina", metadata$`AP-Continent_Country_Population`)] <- "BR-AR"
 metadata <- cbind(metadata,country=ori)
+  
+dlbid <- dlb$Isolate
+dlbid <- sub("\\*","",dlbid)
+stid <- st$Isolate
+cdlb <- metadata$country[match(dlbid,metadata$`AP-GenoID`)] # confirmed NA values not in metadata
+cst <- metadata$country[match(stid,metadata$`AP-GenoID`)]
+dlb<-cbind(dlb,country=cdlb)
+st<-cbind(st,country=cst)
 
-
-dlb %>% group_by(proj) %>% summarise(
+dlb %>% filter(country != "NA") %>% 
+  group_by(proj,country) %>%  
+  summarise(
     avg=mean(mean, na.rm = T), 
     n = sum(!is.na(mean)), 
     sd=sd(mean, na.rm=T), 
@@ -294,13 +303,15 @@ dlb %>% group_by(proj) %>% summarise(
     max=max(mean, na.rm = T)
     )
 
-st %>% group_by(proj) %>% summarise(
-  avg=mean(mean, na.rm = T), 
-  n = sum(!is.na(mean)), 
-  sd=sd(mean, na.rm=T), 
-  se=sd(mean, na.rm=T)/sqrt(sum(!is.na(mean))),
-  min=min(mean, na.rm = T),
-  max=max(mean, na.rm = T)
+st %>% filter(country != "NA") %>% 
+  group_by(proj,country) %>%  
+  summarise(
+    avg=mean(mean, na.rm = T), 
+    n = sum(!is.na(mean)), 
+    sd=sd(mean, na.rm=T), 
+    se=sd(mean, na.rm=T)/sqrt(sum(!is.na(mean))),
+    min=min(mean, na.rm = T),
+    max=max(mean, na.rm = T)
 )
 
 # plotting isolate aggressiveness
