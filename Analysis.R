@@ -293,8 +293,9 @@ dlb<-cbind(dlb,country=cdlb)
 st<-cbind(st,country=cst)
 
 dlb %>% filter(country != "NA") %>% 
-  group_by(proj,country) %>%  
+  group_by(proj, country) %>%  
   summarise(
+    niso=n_distinct(Isolate),
     avg=mean(mean, na.rm = T), 
     n = sum(!is.na(mean)), 
     sd=sd(mean, na.rm=T), 
@@ -304,8 +305,9 @@ dlb %>% filter(country != "NA") %>%
     )
 
 st %>% filter(country != "NA") %>% 
-  group_by(proj,country) %>%  
+  group_by(proj, country) %>%  
   summarise(
+    niso=n_distinct(Isolate),
     avg=mean(mean, na.rm = T), 
     n = sum(!is.na(mean)), 
     sd=sd(mean, na.rm=T), 
