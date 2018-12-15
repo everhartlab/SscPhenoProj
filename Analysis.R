@@ -280,8 +280,8 @@ st  <- bind_rows(G122 = bsum, `IAC-Alvorada` = dsum, .id = "proj")
 # first need to add country of origin to st and dlb, which come from metadata 'AP-Continent_Country_Population'
 ori <- metadata$`AP-Continent_Country_Population`
 ori[grep("_United States", metadata$`AP-Continent_Country_Population`)] <- "US"
-ori[grep("_Brazil", metadata$`AP-Continent_Country_Population`)] <- "BR"
-ori[grep("Argentina", metadata$`AP-Continent_Country_Population`)] <- "AR"
+ori[grep("_Brazil", metadata$`AP-Continent_Country_Population`)] <- "BR-AR"
+ori[grep("Argentina", metadata$`AP-Continent_Country_Population`)] <- "BR-AR"
 metadata <- cbind(metadata,country=ori)
   
 dlbid <- dlb$Isolate
@@ -295,7 +295,7 @@ st[is.na(st$country),]  ## ditto about lack of information about origin
 st <- add_column(st, country = cst)
 
 dlb %>% filter(country != "NA") %>% 
-  group_by(country) %>%  
+  group_by(proj) %>%  
   #ungroup() %>% 
   summarise(
     niso=n_distinct(Isolate),
@@ -308,8 +308,8 @@ dlb %>% filter(country != "NA") %>%
     )
 
 st %>% filter(country != "NA") %>% 
-  #group_by(country) %>% 
-  ungroup() %>% 
+  group_by(proj, Isolate) %>% 
+  #ungroup() %>% 
   summarise(
     niso=n_distinct(Isolate),
     avg=mean(mean, na.rm = T), 
