@@ -294,6 +294,7 @@ dlb[is.na(dlb$country),]  ## These isolates are of unknown origin because the ID
 st[is.na(st$country),]  ## ditto about lack of information about origin
 st <- add_column(st, country = cst)
 
+# Data for Table 1
 dlb %>% filter(country != "NA") %>% 
   group_by(proj) %>%  
   #ungroup() %>% 
